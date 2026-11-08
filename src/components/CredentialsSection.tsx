@@ -39,6 +39,7 @@ export default function CredentialsSection() {
   const fullName = settings?.fullName || 'BALOGUN RIDWAN BABATUNDE';
   const businessName = settings?.businessName || 'RIDWANULLAHI CERTIFIED AGENT';
   const phone = settings?.phoneDisplay || '09161116718';
+  const phoneSecondary = settings?.phoneSecondaryDisplay || '07082256257';
   const email = settings?.email || 'Ridwanyunnus@gmail.com';
   const address = settings?.address || 'Eleko, Ilorin, Kwara State, Nigeria';
 
@@ -92,10 +93,12 @@ export default function CredentialsSection() {
                   <MapPin className="w-3.5 h-3.5 text-sky-400 shrink-0" />
                   <span>{address}</span>
                 </p>
-                <p className="flex items-center justify-center gap-1.5 font-bold text-white">
+                <div className="flex flex-wrap items-center justify-center gap-1.5 font-bold text-white">
                   <Phone className="w-3.5 h-3.5 text-emerald-400" />
-                  <a href={`tel:${phone}`}>{phone}</a>
-                </p>
+                  <a href={`tel:${phone}`} title="Call Line 1">{phone}</a>
+                  <span className="text-slate-500">•</span>
+                  <a href={`tel:${phoneSecondary}`} title="Call Line 2">{phoneSecondary}</a>
+                </div>
               </div>
             </div>
 

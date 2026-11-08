@@ -34,6 +34,7 @@ export default function AboutPage() {
   const fullName = settings?.fullName || 'BALOGUN RIDWAN BABATUNDE';
   const businessName = settings?.businessName || 'RIDWANULLAHI CERTIFIED AGENT';
   const phone = settings?.phoneDisplay || '09161116718';
+  const phoneSecondary = settings?.phoneSecondaryDisplay || '07082256257';
   const email = settings?.email || 'Ridwanyunnus@gmail.com';
   const address = settings?.address || 'Eleko, Ilorin, Kwara State, Nigeria';
   const gbp = settings?.googleBusinessProfile || 'https://share.google/sjVg80f40cSexfRub';
@@ -178,9 +179,15 @@ export default function AboutPage() {
               </div>
               <div className="flex items-start gap-2.5">
                 <Phone className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
-                <a href={`tel:${phone}`} className="hover:underline font-bold text-white">
-                  {phone}
-                </a>
+                <div className="flex flex-wrap items-center gap-2">
+                  <a href={`tel:${phone}`} className="hover:underline font-bold text-white" title="Call Line 1">
+                    {phone}
+                  </a>
+                  <span className="text-slate-400">•</span>
+                  <a href={`tel:${phoneSecondary}`} className="hover:underline text-slate-200" title="Call Line 2">
+                    {phoneSecondary}
+                  </a>
+                </div>
               </div>
               <div className="flex items-start gap-2.5">
                 <Mail className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />

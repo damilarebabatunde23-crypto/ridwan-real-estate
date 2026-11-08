@@ -39,9 +39,11 @@ export default function ContactPage() {
   const fullName = settings?.fullName || 'BALOGUN RIDWAN BABATUNDE';
   const businessName = settings?.businessName || 'RIDWANULLAHI CERTIFIED AGENT';
   const phoneDisplay = settings?.phoneDisplay || '09161116718';
+  const phoneSecondaryDisplay = settings?.phoneSecondaryDisplay || '07082256257';
   const phoneRaw = settings?.phone || '+2349161116718';
   const emailAddress = settings?.email || 'Ridwanyunnus@gmail.com';
   const address = settings?.address || 'Eleko, Ilorin, Kwara State, Nigeria';
+  const whatsappGroupLink = settings?.whatsappGroupLink || 'https://chat.whatsapp.com/FiGliyINdjiLcTFpBYGGzV?mode=ac_t';
   const gbp = settings?.googleBusinessProfile || 'https://share.google/sjVg80f40cSexfRub';
   const linkedin = settings?.linkedinProfile || 'https://www.linkedin.com/in/ridwanullahi-certified-61a689303';
   const facebook = settings?.facebookProfile || 'https://www.facebook.com/profile.php?id=100075809320428';
@@ -128,17 +130,23 @@ export default function ContactPage() {
                   </div>
                 </div>
 
-                {/* Telephone */}
+                {/* Telephone Lines */}
                 <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-slate-50 border border-slate-100">
                   <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
                     <Phone className="w-4 h-4" />
                   </div>
                   <div>
-                    <strong className="block text-slate-900 font-bold text-sm">Phone Number</strong>
-                    <a href={`tel:${phoneDisplay}`} className="text-emerald-700 font-bold text-sm hover:underline">
-                      {phoneDisplay}
-                    </a>
-                    <span className="block text-[11px] text-slate-400">Available Mon - Sat for calls & visits</span>
+                    <strong className="block text-slate-900 font-bold text-sm">Direct Phone Lines (Voice Calls)</strong>
+                    <div className="flex items-center gap-2 pt-0.5">
+                      <a href={`tel:${phoneDisplay}`} className="text-emerald-700 font-extrabold text-sm hover:underline">
+                        {phoneDisplay}
+                      </a>
+                      <span className="text-slate-400">•</span>
+                      <a href={`tel:${phoneSecondaryDisplay}`} className="text-emerald-700 font-bold text-sm hover:underline">
+                        {phoneSecondaryDisplay}
+                      </a>
+                    </div>
+                    <span className="block text-[11px] text-slate-400 mt-0.5">Available Mon - Sat for phone calls & property inquiries</span>
                   </div>
                 </div>
 
@@ -161,7 +169,7 @@ export default function ContactPage() {
                     <MessageCircle className="w-4 h-4 fill-white" />
                   </div>
                   <div>
-                    <strong className="block text-emerald-950 font-bold text-sm">Direct WhatsApp</strong>
+                    <strong className="block text-emerald-950 font-bold text-sm">Direct WhatsApp Contact</strong>
                     <a
                       href="https://wa.me/qr/W4VP4AFFIC5UC1"
                       target="_blank"
@@ -169,6 +177,24 @@ export default function ContactPage() {
                       className="text-emerald-700 font-bold hover:underline inline-block mt-0.5"
                     >
                       Chat on wa.me/qr/W4VP4AFFIC5UC1 &rarr;
+                    </a>
+                  </div>
+                </div>
+
+                {/* WhatsApp Community Group */}
+                <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-teal-50 border border-teal-100">
+                  <div className="w-9 h-9 rounded-xl bg-teal-600 text-white flex items-center justify-center shrink-0">
+                    <Users className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <strong className="block text-teal-950 font-bold text-sm">VIP WhatsApp Community Group</strong>
+                    <a
+                      href={whatsappGroupLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-teal-700 font-bold hover:underline inline-block mt-0.5"
+                    >
+                      Join Official WhatsApp Group &rarr;
                     </a>
                   </div>
                 </div>

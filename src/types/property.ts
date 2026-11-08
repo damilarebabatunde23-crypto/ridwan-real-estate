@@ -86,6 +86,8 @@ export interface BusinessSettings {
   tagline: string;
   phone: string;
   phoneDisplay: string;
+  phoneSecondary?: string;
+  phoneSecondaryDisplay?: string;
   email: string;
   address: string;
   whatsappGroupLink: string;

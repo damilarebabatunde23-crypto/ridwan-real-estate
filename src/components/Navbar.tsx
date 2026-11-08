@@ -50,28 +50,40 @@ export default function Navbar() {
   ];
 
   const phone = settings?.phoneDisplay || '09161116718';
+  const phoneSecondary = settings?.phoneSecondaryDisplay || '07082256257';
   const rawPhone = settings?.phone || '+2349161116718';
   const email = settings?.email || 'Ridwanyunnus@gmail.com';
   const location = settings?.address || 'Eleko, Ilorin, Kwara State';
-  const whatsappCommunityLink = settings?.whatsappGroupLink || 'https://wa.me/qr/W4VP4AFFIC5UC1';
+  const whatsappCommunityLink = settings?.whatsappGroupLink || 'https://chat.whatsapp.com/FiGliyINdjiLcTFpBYGGzV?mode=ac_t';
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white shadow-md">
       {/* Top Bar for Trust & Quick Contacts */}
       <div className="bg-[#0a192f] text-slate-300 text-xs py-2 px-4 sm:px-8 border-b border-slate-800">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-4">
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-3 sm:gap-4">
             <span className="flex items-center gap-1.5 text-sky-400 font-medium">
               <MapPin className="w-3.5 h-3.5" />
               <span>{location}</span>
             </span>
-            <a 
-              href={`tel:${phone}`} 
-              className="flex items-center gap-1.5 hover:text-white transition-colors"
-            >
-              <Phone className="w-3.5 h-3.5 text-emerald-400" />
-              <span>{phone}</span>
-            </a>
+            <div className="flex items-center gap-1.5">
+              <a 
+                href={`tel:${phone}`} 
+                className="flex items-center gap-1 hover:text-white transition-colors"
+                title="Direct Line 1"
+              >
+                <Phone className="w-3.5 h-3.5 text-emerald-400" />
+                <span>{phone}</span>
+              </a>
+              <span className="text-slate-600">•</span>
+              <a 
+                href={`tel:${phoneSecondary}`} 
+                className="hover:text-white transition-colors text-slate-300"
+                title="Direct Line 2"
+              >
+                <span>{phoneSecondary}</span>
+              </a>
+            </div>
             <a 
               href={`mailto:${email}`} 
               className="hidden md:flex items-center gap-1.5 hover:text-white transition-colors"

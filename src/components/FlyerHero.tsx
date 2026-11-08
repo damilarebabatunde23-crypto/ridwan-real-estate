@@ -225,7 +225,11 @@ export default function FlyerHero() {
             <div className="p-4 bg-slate-50 space-y-2 text-xs">
               <div className="flex items-center justify-between">
                 <span className="font-bold text-slate-900">Scan with WhatsApp camera</span>
-                <span className="text-emerald-700 font-extrabold text-sm">09161116718</span>
+                <span className="text-emerald-700 font-extrabold text-xs">wa.me/qr/W4VP4AFFIC5UC1</span>
+              </div>
+              <div className="text-[11px] text-slate-600 flex items-center justify-between">
+                <span>Direct Call Lines:</span>
+                <span className="font-semibold text-slate-800">09161116718 • 07082256257</span>
               </div>
               <a
                 href="https://wa.me/qr/W4VP4AFFIC5UC1"
@@ -589,14 +593,26 @@ export default function FlyerHero() {
                   <span>CONTACT US TODAY</span>
                 </a>
 
-                <div className="space-y-1">
-                  <a
-                    href="tel:09161116718"
-                    className="flex items-center gap-2 text-xl sm:text-2xl font-black text-white hover:text-emerald-400 transition-colors"
-                  >
-                    <Phone className="w-5 h-5 text-[#00a8ff]" />
-                    <span>09161116718</span>
-                  </a>
+                <div className="space-y-1.5">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-3">
+                    <a
+                      href="tel:09161116718"
+                      className="flex items-center gap-1.5 text-lg sm:text-2xl font-black text-white hover:text-emerald-400 transition-colors"
+                      title="Direct Call Line 1"
+                    >
+                      <Phone className="w-5 h-5 text-[#00a8ff]" />
+                      <span>09161116718</span>
+                    </a>
+                    <span className="hidden sm:inline text-slate-500">•</span>
+                    <a
+                      href="tel:07082256257"
+                      className="flex items-center gap-1.5 text-base sm:text-xl font-bold text-slate-200 hover:text-emerald-400 transition-colors"
+                      title="Direct Call Line 2"
+                    >
+                      <Phone className="w-4 h-4 text-emerald-400" />
+                      <span>07082256257</span>
+                    </a>
+                  </div>
                   <a
                     href="mailto:Ridwanyunnus@gmail.com"
                     className="flex items-center gap-2 text-xs text-slate-300 hover:text-white transition-colors"

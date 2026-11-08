@@ -100,6 +100,7 @@ function PropertyDetailContent({ params }: PageProps) {
     : getWhatsAppPropertyLink(property);
 
   const phone = settings?.phoneDisplay || '09161116718';
+  const phoneSecondary = settings?.phoneSecondaryDisplay || '07082256257';
 
   const handleShare = () => {
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
@@ -373,13 +374,24 @@ function PropertyDetailContent({ params }: PageProps) {
                   <span>Contact Agent on WhatsApp</span>
                 </a>
 
-                <a
-                  href={`tel:${phone}`}
-                  className="w-full py-2.5 px-4 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition-colors flex items-center justify-center gap-2"
-                >
-                  <Phone className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Call: {phone}</span>
-                </a>
+                <div className="flex items-center gap-2">
+                  <a
+                    href={`tel:${phone}`}
+                    className="flex-1 py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition-colors flex items-center justify-center gap-1.5"
+                    title="Call Line 1"
+                  >
+                    <Phone className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Call: {phone}</span>
+                  </a>
+                  <a
+                    href={`tel:${phoneSecondary}`}
+                    className="flex-1 py-2.5 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs transition-colors flex items-center justify-center gap-1.5"
+                    title="Call Line 2"
+                  >
+                    <Phone className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>{phoneSecondary}</span>
+                  </a>
+                </div>
               </div>
 
               {/* Guarantees Box */}

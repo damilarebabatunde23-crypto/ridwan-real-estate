@@ -1375,12 +1375,24 @@ export default function AdminPage() {
                     </div>
 
                     <div>
-                      <label className="block font-bold text-slate-700 mb-1">Display Phone Number</label>
+                      <label className="block font-bold text-slate-700 mb-1">Primary Calling Line</label>
                       <input
                         type="text"
                         value={settingsForm.phoneDisplay}
-                        onChange={(e) => setSettingsForm({ ...settingsForm, phoneDisplay: e.target.value })}
+                        onChange={(e) => setSettingsForm({ ...settingsForm, phoneDisplay: e.target.value, phone: e.target.value })}
                         className="w-full p-2.5 border border-slate-300 rounded-xl outline-none"
+                        placeholder="09161116718"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block font-bold text-slate-700 mb-1">Secondary Calling Line</label>
+                      <input
+                        type="text"
+                        value={settingsForm.phoneSecondaryDisplay || ''}
+                        onChange={(e) => setSettingsForm({ ...settingsForm, phoneSecondaryDisplay: e.target.value, phoneSecondary: e.target.value })}
+                        className="w-full p-2.5 border border-slate-300 rounded-xl outline-none"
+                        placeholder="07082256257"
                       />
                     </div>
 

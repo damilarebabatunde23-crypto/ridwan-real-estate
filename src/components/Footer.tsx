@@ -32,9 +32,10 @@ export default function Footer() {
   }, []);
 
   const phone = settings?.phoneDisplay || '09161116718';
+  const phoneSecondary = settings?.phoneSecondaryDisplay || '07082256257';
   const email = settings?.email || 'Ridwanyunnus@gmail.com';
   const address = settings?.address || 'Eleko, Ilorin, Kwara State, Nigeria';
-  const whatsappGroupLink = settings?.whatsappGroupLink || 'https://wa.me/qr/W4VP4AFFIC5UC1';
+  const whatsappGroupLink = settings?.whatsappGroupLink || 'https://chat.whatsapp.com/FiGliyINdjiLcTFpBYGGzV?mode=ac_t';
   const gbpLink = settings?.googleBusinessProfile || 'https://share.google/sjVg80f40cSexfRub';
   const linkedinLink = settings?.linkedinProfile || 'https://www.linkedin.com/in/ridwanullahi-certified-61a689303';
   const fbLink = settings?.facebookProfile || 'https://www.facebook.com/profile.php?id=100075809320428';
@@ -208,12 +209,18 @@ export default function Footer() {
                 <MapPin className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
                 <span>{address}</span>
               </p>
-              <p className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-emerald-400 shrink-0" />
-                <a href={`tel:${phone}`} className="hover:text-white">
-                  {phone}
-                </a>
-              </p>
+              <div className="flex flex-col gap-1">
+                <p className="flex items-center gap-2">
+                  <Phone className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <a href={`tel:${phone}`} className="hover:text-white font-medium" title="Call Line 1">
+                    {phone}
+                  </a>
+                  <span className="text-slate-600">•</span>
+                  <a href={`tel:${phoneSecondary}`} className="hover:text-white" title="Call Line 2">
+                    {phoneSecondary}
+                  </a>
+                </p>
+              </div>
               <p className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-sky-400 shrink-0" />
                 <a href={`mailto:${email}`} className="hover:text-white break-all">
@@ -231,7 +238,7 @@ export default function Footer() {
                 className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs shadow-md transition-colors"
               >
                 <MessageCircle className="w-3.5 h-3.5 fill-white" />
-                <span>WhatsApp: {phone}</span>
+                <span>WhatsApp Direct Chat</span>
               </a>
 
               <a

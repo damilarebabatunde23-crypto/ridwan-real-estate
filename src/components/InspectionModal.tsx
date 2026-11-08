@@ -196,7 +196,7 @@ export default function InspectionModal({ property, isOpen, onClose }: Inspectio
                 <span>Confirm & Open WhatsApp Chat</span>
               </button>
               <p className="text-[11px] text-center text-slate-400 mt-2">
-                Direct transmission to Balogun Ridwan (09161116718). Zero inspection fees prior to appointment.
+                Direct transmission to Balogun Ridwan (09161116718 / 07082256257). Zero inspection fees prior to appointment.
               </p>
             </div>
           </form>
