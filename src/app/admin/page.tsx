@@ -464,24 +464,38 @@ export default function AdminPage() {
       ) : (
         /* Authenticated Admin Dashboard */
         <div className="flex-1 max-w-7xl mx-auto px-4 sm:px-8 py-8 w-full space-y-6">
-          {/* Top Admin Status Bar */}
-          <div className="bg-[#0a192f] text-white rounded-3xl p-6 sm:p-8 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span className="text-xs font-extrabold uppercase tracking-wider text-sky-300">
-                  Live Management Portal
-                </span>
-              </div>
-              <h1 className="text-2xl sm:text-3xl font-black text-white">
-                Admin Dashboard: Balogun Ridwan
-              </h1>
-              <p className="text-xs text-slate-300">
-                Any changes made here immediately appear across the public website and student hostel catalogue.
-              </p>
+          {/* Top Admin Status Bar with Architectural Backdrop */}
+          <div className="relative bg-[#0a192f] text-white rounded-3xl p-6 sm:p-8 shadow-xl flex flex-col md:flex-row md:items-center justify-between gap-6 overflow-hidden border border-slate-800">
+            <div className="absolute inset-0 z-0">
+              <img
+                src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=2000&q=85"
+                alt="Admin Real Estate Management"
+                className="w-full h-full object-cover brightness-20"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#0a192f] via-[#0a192f]/90 to-[#0c2340]/80" />
             </div>
 
-            <div className="flex flex-wrap items-center gap-2.5">
+            <div className="relative z-10 flex items-center gap-4">
+              <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-amber-400 shrink-0 shadow-lg hidden sm:block">
+                <img src="/images/agent-balogun-ridwan.jpg" alt="Balogun Ridwan" className="w-full h-full object-cover object-top" />
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-xs font-extrabold uppercase tracking-wider text-sky-300">
+                    Live Management Portal
+                  </span>
+                </div>
+                <h1 className="text-2xl sm:text-3xl font-black text-white">
+                  Admin Dashboard: Balogun Ridwan
+                </h1>
+                <p className="text-xs text-slate-300">
+                  Any changes made here immediately appear across the public website and student hostel catalogue.
+                </p>
+              </div>
+            </div>
+
+            <div className="relative z-10 flex flex-wrap items-center gap-2.5">
               <button
                 onClick={handleResetSeed}
                 className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition-colors flex items-center gap-1.5 border border-slate-700"

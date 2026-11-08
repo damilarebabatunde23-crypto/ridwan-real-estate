@@ -69,19 +69,30 @@ export default function ContactPage() {
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
       <Navbar />
 
-      {/* Header */}
-      <section className="bg-gradient-to-r from-[#0a192f] via-[#112240] to-[#0a192f] text-white py-14 sm:py-16 px-4 sm:px-8 border-b border-slate-800">
-        <div className="max-w-7xl mx-auto space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+      {/* Top Hero Banner with High-Resolution Corporate Office Image */}
+      <section className="relative min-h-[340px] sm:min-h-[380px] flex items-center bg-[#0a192f] text-white py-16 px-4 sm:px-8 border-b border-slate-800 overflow-hidden">
+        {/* Background Image */}
+        <div className="absolute inset-0 z-0">
+          <img
+            src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=2000&q=85"
+            alt="Contact Balogun Ridwan Real Estate Office"
+            className="w-full h-full object-cover object-center brightness-35"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0a192f] via-[#0a192f]/90 to-[#0c2340]/80" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0a192f] via-transparent to-transparent" />
+        </div>
+
+        <div className="relative z-10 max-w-7xl mx-auto w-full space-y-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 backdrop-blur-sm">
             <MessageCircle className="w-4 h-4 text-emerald-400" />
             <span>Direct WhatsApp & Agency Office</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-white drop-shadow-md">
             CONTACT BALOGUN RIDWAN
           </h1>
 
-          <p className="text-sm sm:text-base text-slate-300 max-w-3xl leading-relaxed">
+          <p className="text-sm sm:text-base text-slate-200 max-w-3xl leading-relaxed drop-shadow">
             Have questions about buying land, renting a commercial shop, securing a student hostel near Kwara Poly or investing in Ilorin property? Reach out directly.
           </p>
         </div>
