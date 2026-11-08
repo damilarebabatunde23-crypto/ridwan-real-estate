@@ -228,13 +228,13 @@ export default function FlyerHero() {
                 <span className="text-emerald-700 font-extrabold text-sm">09161116718</span>
               </div>
               <a
-                href="https://wa.me/qr/W4VP4AFFIC5UC"
+                href="https://wa.me/qr/W4VP4AFFIC5UC1"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-center flex items-center justify-center gap-2 transition-colors"
               >
                 <MessageCircle className="w-4 h-4 fill-white" />
-                <span>Open WhatsApp Direct Chat (wa.me/qr/W4VP4AFFIC5UC)</span>
+                <span>Open WhatsApp Direct Chat (wa.me/qr/W4VP4AFFIC5UC1)</span>
               </a>
             </div>
           </div>
@@ -630,12 +630,12 @@ export default function FlyerHero() {
                     </div>
                     <p className="text-[11px] text-slate-300">Click or Scan to connect</p>
                     <a
-                      href="https://wa.me/qr/W4VP4AFFIC5UC"
+                      href="https://wa.me/qr/W4VP4AFFIC5UC1"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-block text-[10px] font-extrabold text-emerald-400 hover:text-emerald-300 underline"
                     >
-                      Open wa.me/qr/W4VP4AFFIC5UC &rarr;
+                      Open wa.me/qr/W4VP4AFFIC5UC1 &rarr;
                     </a>
                   </div>
                 </div>

@@ -34,7 +34,7 @@ export default function Footer() {
   const phone = settings?.phoneDisplay || '09161116718';
   const email = settings?.email || 'Ridwanyunnus@gmail.com';
   const address = settings?.address || 'Eleko, Ilorin, Kwara State, Nigeria';
-  const whatsappGroupLink = settings?.whatsappGroupLink || 'https://wa.me/qr/W4VP4AFFIC5UC';
+  const whatsappGroupLink = settings?.whatsappGroupLink || 'https://wa.me/qr/W4VP4AFFIC5UC1';
   const gbpLink = settings?.googleBusinessProfile || 'https://share.google/sjVg80f40cSexfRub';
   const linkedinLink = settings?.linkedinProfile || 'https://www.linkedin.com/in/ridwanullahi-certified-61a689303';
   const fbLink = settings?.facebookProfile || 'https://www.facebook.com/profile.php?id=100075809320428';

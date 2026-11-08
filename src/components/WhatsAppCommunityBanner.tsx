@@ -5,7 +5,7 @@ import { Users, Bell, Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
 import { getSettings, getWhatsAppGeneralLink } from '@/lib/store';
 
 export default function WhatsAppCommunityBanner() {
-  const [whatsappLink, setWhatsappLink] = useState('https://wa.me/qr/W4VP4AFFIC5UC');
+  const [whatsappLink, setWhatsappLink] = useState('https://wa.me/qr/W4VP4AFFIC5UC1');
 
   useEffect(() => {
     const settings = getSettings();

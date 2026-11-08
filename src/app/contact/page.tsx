@@ -163,12 +163,12 @@ export default function ContactPage() {
                   <div>
                     <strong className="block text-emerald-950 font-bold text-sm">Direct WhatsApp</strong>
                     <a
-                      href="https://wa.me/qr/W4VP4AFFIC5UC"
+                      href="https://wa.me/qr/W4VP4AFFIC5UC1"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-emerald-700 font-bold hover:underline inline-block mt-0.5"
                     >
-                      Chat on wa.me/qr/W4VP4AFFIC5UC &rarr;
+                      Chat on wa.me/qr/W4VP4AFFIC5UC1 &rarr;
                     </a>
                   </div>
                 </div>

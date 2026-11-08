@@ -12,7 +12,7 @@ export const initialSettings: BusinessSettings = {
   phoneDisplay: '09161116718',
   email: 'Ridwanyunnus@gmail.com',
   address: '1, Elekoyangan, Ilorin, Kwara State, Nigeria',
-  whatsappGroupLink: 'https://wa.me/qr/W4VP4AFFIC5UC',
+  whatsappGroupLink: 'https://wa.me/qr/W4VP4AFFIC5UC1',
   googleBusinessProfile: 'https://share.google/sjVg80f40cSexfRub',
   linkedinProfile: 'https://www.linkedin.com/in/ridwanullahi-certified-61a689303',
   facebookProfile: 'https://www.facebook.com/profile.php?id=100075809320428',
@@ -281,7 +281,7 @@ export const initialCertificates: Certificate[] = [
     title: 'Official Ridwanullahi WhatsApp Verified Contact QR Card',
     issuer: 'WhatsApp Verified Channel (Balogun Ridwan)',
     issueDate: 'Active & Verified Channel',
-    credentialId: 'wa.me/qr/W4VP4AFFIC5UC | Call: 09161116718',
+    credentialId: 'wa.me/qr/W4VP4AFFIC5UC1 | Call: 09161116718',
     description: 'Official WhatsApp direct QR code contact card for Balogun Ridwan Babatunde (RIDWANULLAHI CERTIFIED AGENT). Allows direct encrypted inquiry, instant property video requests, hostel inspection scheduling, and verified documentation transfer.',
     image: '/images/ridwan-whatsapp-qr.jpg',
     isVerified: true

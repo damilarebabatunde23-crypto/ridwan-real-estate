@@ -53,7 +53,7 @@ export default function Navbar() {
   const rawPhone = settings?.phone || '+2349161116718';
   const email = settings?.email || 'Ridwanyunnus@gmail.com';
   const location = settings?.address || 'Eleko, Ilorin, Kwara State';
-  const whatsappCommunityLink = settings?.whatsappGroupLink || 'https://wa.me/qr/W4VP4AFFIC5UC';
+  const whatsappCommunityLink = settings?.whatsappGroupLink || 'https://wa.me/qr/W4VP4AFFIC5UC1';
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white shadow-md">

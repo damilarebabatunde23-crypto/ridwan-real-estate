@@ -147,11 +147,16 @@ export function deleteCertificate(id: string): boolean {
 // Settings Store
 export function getSettings(): BusinessSettings {
   const current = safeGet<BusinessSettings>(STORAGE_KEYS.SETTINGS, initialSettings);
-  // Auto-migrate if stored settings still contain old phone number or placeholder
-  if (current.phoneDisplay === '07082256257' || current.phone === '+2347082256257' || current.whatsappGroupLink?.includes('INSERT')) {
+  // Auto-migrate if stored settings still contain old phone number or previous WhatsApp link
+  if (
+    current.phoneDisplay === '07082256257' || 
+    current.phone === '+2347082256257' || 
+    current.whatsappGroupLink?.includes('INSERT') ||
+    current.whatsappGroupLink === 'https://wa.me/qr/W4VP4AFFIC5UC'
+  ) {
     current.phone = '+2349161116718';
     current.phoneDisplay = '09161116718';
-    current.whatsappGroupLink = 'https://wa.me/qr/W4VP4AFFIC5UC';
+    current.whatsappGroupLink = 'https://wa.me/qr/W4VP4AFFIC5UC1';
     safeSet(STORAGE_KEYS.SETTINGS, current);
   }
   return current;
@@ -207,7 +212,7 @@ export function resetToDefaults(): void {
 }
 
 // WhatsApp Direct Links & Call Numbers
-export const WHATSAPP_DIRECT_LINK = 'https://wa.me/qr/W4VP4AFFIC5UC';
+export const WHATSAPP_DIRECT_LINK = 'https://wa.me/qr/W4VP4AFFIC5UC1';
 export const WHATSAPP_NUMBER = '2349161116718';
 export const PHONE_CALL_DISPLAY = '09161116718';
 export const PHONE_CALL_RAW = '+2349161116718';
