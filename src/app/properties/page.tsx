@@ -126,18 +126,18 @@ export default function PropertiesCataloguePage() {
 
       {/* Top Hero Banner with High-Resolution Luxury Real Estate Image */}
       <section className="relative min-h-[340px] sm:min-h-[380px] flex items-center bg-[#0a192f] text-white py-16 px-4 sm:px-8 border-b border-slate-800 overflow-hidden">
-        {/* Luxury Real Estate Image Background */}
+        {/* Luxury Real Estate Image Background - Clear & Visible */}
         <div className="absolute inset-0 z-0">
           <img
             src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2000&q=85"
             alt="Luxury Real Estate Properties in Ilorin, Kwara State"
-            className="w-full h-full object-cover object-center brightness-35"
+            className="w-full h-full object-cover object-center brightness-85 contrast-105"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0a192f] via-[#0a192f]/90 to-[#0c2340]/80" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0a192f] via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0a192f]/85 via-[#0a192f]/45 to-slate-900/30" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0a192f]/80 via-transparent to-transparent" />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto w-full space-y-4">
+        <div className="relative z-10 max-w-7xl mx-auto w-full space-y-4 drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
           <div className="flex flex-wrap items-center gap-2">
             <span className="px-3 py-1 rounded-full text-xs font-bold bg-blue-500/20 text-sky-300 border border-blue-400/30 flex items-center gap-1.5 backdrop-blur-sm">
               <Building2 className="w-4 h-4 text-sky-400" />

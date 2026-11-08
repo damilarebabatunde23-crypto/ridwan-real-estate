@@ -303,18 +303,18 @@ export default function FlyerHero() {
 
           {/* 2. HERO COMPOSITION (Villa Backdrop + Headline + Circular Bedroom Inset) */}
           <div className="relative min-h-[460px] sm:min-h-[520px] bg-[#0a192f] overflow-hidden flex flex-col justify-between p-6 sm:p-10 text-white">
-            {/* Background Villa Image */}
+            {/* Background Villa Image - Bright and Visible */}
             <div className="absolute inset-0 z-0">
               <img
                 src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2000&q=85"
                 alt="Luxury Modern Architecture in Nigeria"
-                className="w-full h-full object-cover object-center brightness-50"
+                className="w-full h-full object-cover object-center brightness-85"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#0a192f]/95 via-[#0a192f]/80 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#0a192f]/85 via-[#0a192f]/45 to-transparent" />
             </div>
 
             {/* Left Headline Area */}
-            <div className="relative z-10 max-w-xl space-y-4 pt-4 sm:pt-8">
+            <div className="relative z-10 max-w-xl space-y-4 pt-4 sm:pt-8 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
               <div className="space-y-1">
                 <div className="text-4xl sm:text-6xl font-black text-white tracking-tight leading-none">
                   FIND YOUR

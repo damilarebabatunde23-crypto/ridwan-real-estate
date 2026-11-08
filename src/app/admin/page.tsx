@@ -408,19 +408,29 @@ export default function AdminPage() {
       {!isAuthenticated ? (
         <div className="flex-1 flex items-center justify-center p-6 py-20">
           <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden">
-            <div className="bg-[#0a192f] text-white p-8 text-center space-y-2">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-sky-500 text-white flex items-center justify-center mx-auto shadow-md">
-                <Lock className="w-7 h-7" />
+            <div className="relative bg-[#0a192f] text-white p-8 text-center space-y-2 overflow-hidden">
+              <div className="absolute inset-0 z-0">
+                <img
+                  src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=85"
+                  alt="Admin Control Portal"
+                  className="w-full h-full object-cover brightness-85 contrast-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0a192f] via-[#0a192f]/60 to-[#0a192f]/40" />
               </div>
-              <h2 className="text-2xl font-black tracking-tight text-white">
-                Admin Control Portal
-              </h2>
-              <p className="text-xs text-sky-200">
-                RIDWANULLAHI CERTIFIED AGENT
-              </p>
-              <p className="text-[11px] text-slate-400">
-                Authorized access for Balogun Ridwan Babatunde
-              </p>
+              <div className="relative z-10">
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-sky-500 text-white flex items-center justify-center mx-auto shadow-md mb-3">
+                  <Lock className="w-7 h-7" />
+                </div>
+                <h2 className="text-2xl font-black tracking-tight text-white drop-shadow">
+                  Admin Control Portal
+                </h2>
+                <p className="text-xs text-sky-200 font-semibold drop-shadow">
+                  RIDWANULLAHI CERTIFIED AGENT
+                </p>
+                <p className="text-[11px] text-slate-300 drop-shadow">
+                  Authorized access for Balogun Ridwan Babatunde
+                </p>
+              </div>
             </div>
 
             <form onSubmit={handleLogin} className="p-8 space-y-5">
@@ -470,9 +480,9 @@ export default function AdminPage() {
               <img
                 src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=2000&q=85"
                 alt="Admin Real Estate Management"
-                className="w-full h-full object-cover brightness-20"
+                className="w-full h-full object-cover brightness-85 contrast-105"
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-[#0a192f] via-[#0a192f]/90 to-[#0c2340]/80" />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#0a192f]/85 via-[#0a192f]/45 to-slate-900/30" />
             </div>
 
             <div className="relative z-10 flex items-center gap-4">
