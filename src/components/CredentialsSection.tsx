@@ -66,8 +66,15 @@ export default function CredentialsSection() {
             <div className="lg:col-span-4 flex flex-col items-center text-center p-6 bg-gradient-to-br from-[#0a192f] via-[#112240] to-[#1e3a8a] text-white rounded-2xl shadow-lg relative overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-sky-500/10 rounded-full blur-2xl" />
               
-              <div className="relative w-28 h-28 rounded-full border-4 border-amber-400/80 shadow-2xl overflow-hidden mb-4 bg-slate-800 flex items-center justify-center">
-                <Building2 className="w-14 h-14 text-sky-300" />
+              <div className="relative w-36 h-48 sm:w-44 sm:h-56 rounded-2xl border-4 border-amber-400 shadow-2xl overflow-hidden mb-4 bg-slate-800">
+                <img
+                  src="/images/agent-balogun-ridwan.jpg"
+                  alt="Balogun Ridwan Babatunde - Certified Real Estate Agent"
+                  className="w-full h-full object-cover object-top"
+                />
+                <div className="absolute bottom-2 right-2 p-1 rounded-full bg-emerald-500 text-white shadow-md">
+                  <ShieldCheck className="w-4 h-4" />
+                </div>
               </div>
 
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/40 text-xs font-bold mb-2">
@@ -82,7 +89,7 @@ export default function CredentialsSection() {
 
               <div className="mt-4 pt-4 border-t border-slate-700/80 w-full text-xs space-y-1.5 text-slate-300">
                 <p className="flex items-center justify-center gap-1.5">
-                  <MapPin className="w-3.5 h-3.5 text-sky-400" />
+                  <MapPin className="w-3.5 h-3.5 text-sky-400 shrink-0" />
                   <span>{address}</span>
                 </p>
                 <p className="flex items-center justify-center gap-1.5 font-bold text-white">
@@ -148,6 +155,41 @@ export default function CredentialsSection() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Government CAC Certificate Verified Banner */}
+        <div className="bg-gradient-to-r from-emerald-950 via-[#0a192f] to-[#112240] rounded-3xl p-6 sm:p-8 text-white border-2 border-emerald-500/40 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6 mb-12">
+          <div className="flex items-center gap-5">
+            <div 
+              className="w-18 h-24 rounded-xl overflow-hidden border-2 border-emerald-400 shrink-0 shadow-lg cursor-pointer bg-white hover:scale-105 transition-transform" 
+              onClick={() => setSelectedCert(certificates[0])}
+              title="Click to view high-resolution Government Certificate"
+            >
+              <img src="/images/cac-certificate.jpg" alt="CAC Certificate of Registration" className="w-full h-full object-cover" />
+            </div>
+            <div className="space-y-1">
+              <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 text-[11px] font-bold">
+                <ShieldCheck className="w-3.5 h-3.5" />
+                <span>Federal Government Registered • Corporate Affairs Commission (CAC)</span>
+              </div>
+              <h4 className="text-xl sm:text-2xl font-black text-white">
+                RIDWANULLAHI REAL ESTATE AGENT
+              </h4>
+              <p className="text-xs text-sky-200">
+                Registration No: <strong className="text-white font-mono bg-white/10 px-1.5 py-0.5 rounded">9992778</strong> • Tax ID (TIN): <strong className="text-white font-mono bg-white/10 px-1.5 py-0.5 rounded">2622351035612</strong>
+              </p>
+              <p className="text-[11px] text-slate-300">
+                Principal Registered Address: 1, Elekoyangan, Ilorin, Kwara State, Nigeria (Companies & Allied Matters Act 2020)
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => setSelectedCert(certificates[0])}
+            className="px-5 py-3 rounded-xl bg-gradient-to-r from-emerald-400 to-emerald-500 hover:from-emerald-300 hover:to-emerald-400 text-slate-950 font-black text-xs shrink-0 shadow-lg flex items-center gap-2 transition-all hover:scale-105"
+          >
+            <Eye className="w-4 h-4" />
+            <span>Examine Official Certificate</span>
+          </button>
         </div>
 
         {/* Certificate Preview Cards Grid */}

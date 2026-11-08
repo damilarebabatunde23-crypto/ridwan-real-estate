@@ -25,6 +25,8 @@ import { getWhatsAppGeneralLink } from '@/lib/store';
 
 export default function FlyerHero() {
   const [showFlyerModal, setShowFlyerModal] = useState(false);
+  const [showCacModal, setShowCacModal] = useState(false);
+  const [showAgentModal, setShowAgentModal] = useState(false);
 
   const servicesCol1 = [
     {
@@ -115,13 +117,111 @@ export default function FlyerHero() {
         </div>
       )}
 
+      {/* CAC Certificate Lightbox Modal */}
+      {showCacModal && (
+        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="relative max-w-xl w-full bg-white rounded-3xl overflow-hidden shadow-2xl">
+            <div className="p-4 bg-emerald-950 text-white flex items-center justify-between border-b border-emerald-800">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="w-5 h-5 text-emerald-400" />
+                <div>
+                  <span className="font-extrabold text-sm block">FEDERAL REPUBLIC OF NIGERIA</span>
+                  <span className="text-[11px] text-emerald-300">Corporate Affairs Commission (CAC) Registration</span>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowCacModal(false)}
+                className="p-1 rounded-lg hover:bg-white/10 text-slate-300 hover:text-white"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            <div className="p-4 bg-slate-900 flex justify-center max-h-[75vh] overflow-y-auto">
+              <img
+                src="/images/cac-certificate.jpg"
+                alt="Federal Republic of Nigeria Certificate of Registration CAC 9992778"
+                className="max-h-[70vh] w-auto object-contain rounded-xl shadow-lg bg-white"
+              />
+            </div>
+            <div className="p-4 bg-slate-50 space-y-2 text-xs">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="font-bold text-slate-800">RIDWANULLAHI REAL ESTATE AGENT</span>
+                <span className="font-mono bg-emerald-100 text-emerald-900 px-2 py-0.5 rounded font-bold">BN: 9992778 • TIN: 2622351035612</span>
+              </div>
+              <p className="text-slate-500 text-[11px]">
+                Principal Place of Business: 1, Elekoyangan, Ilorin, Kwara State, Nigeria (Companies & Allied Matters Act 2020)
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Owner Photo Lightbox Modal */}
+      {showAgentModal && (
+        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="relative max-w-md w-full bg-white rounded-3xl overflow-hidden shadow-2xl">
+            <div className="p-4 bg-[#0a192f] text-white flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="font-extrabold text-sm">BALOGUN RIDWAN BABATUNDE</span>
+                <span className="text-xs text-amber-400 font-bold">• Certified Agent</span>
+              </div>
+              <button
+                onClick={() => setShowAgentModal(false)}
+                className="p-1 rounded-lg hover:bg-white/10 text-slate-300 hover:text-white"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            <div className="p-4 bg-slate-900 flex justify-center max-h-[75vh] overflow-y-auto">
+              <img
+                src="/images/agent-balogun-ridwan.jpg"
+                alt="Balogun Ridwan Babatunde"
+                className="max-h-[70vh] w-auto object-contain rounded-2xl shadow-xl"
+              />
+            </div>
+            <div className="p-4 bg-slate-50 flex items-center justify-between text-xs">
+              <div>
+                <strong className="block text-slate-900 font-bold">RIDWANULLAHI CERTIFIED AGENT</strong>
+                <span className="text-slate-500">Eleko, Ilorin, Kwara State</span>
+              </div>
+              <a
+                href={getWhatsAppGeneralLink()}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold flex items-center gap-1.5"
+              >
+                <MessageCircle className="w-4 h-4 fill-white" />
+                <span>Chat Direct</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* FLYER-STYLE MAIN CANVAS CONTAINER */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-4 pb-12">
-        {/* Floating Quick Action: View Original Flyer Button */}
-        <div className="flex justify-end mb-3">
+        {/* Floating Quick Action Buttons: CAC Certificate, Owner Photo, and Flyer */}
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => setShowCacModal(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-800 hover:bg-emerald-100 text-xs font-bold shadow-sm border border-emerald-300 transition-all cursor-pointer"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Federal CAC Certificate (BN: 9992778)</span>
+            </button>
+            <button
+              onClick={() => setShowAgentModal(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-blue-50 text-blue-800 hover:bg-blue-100 text-xs font-bold shadow-sm border border-blue-300 transition-all cursor-pointer"
+            >
+              <Users className="w-3.5 h-3.5 text-blue-600" />
+              <span>Meet Balogun Ridwan (Lead Agent)</span>
+            </button>
+          </div>
+
           <button
             onClick={() => setShowFlyerModal(true)}
-            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white text-slate-700 hover:text-blue-700 text-xs font-bold shadow-sm border border-slate-200 hover:border-blue-400 transition-all"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white text-slate-700 hover:text-blue-700 text-xs font-bold shadow-sm border border-slate-200 hover:border-blue-400 transition-all cursor-pointer"
           >
             <Maximize2 className="w-3.5 h-3.5 text-blue-600" />
             <span>View Original Reference Flyer</span>
@@ -358,37 +458,55 @@ export default function FlyerHero() {
           {/* 4. BOTTOM 3-PHOTO SHOWCASE + ANGLED BADGE */}
           <div className="p-6 sm:p-10 pt-2 bg-white">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
-              {/* 3 Photos Strip (8 cols) */}
+              {/* 3 Photos Strip (8 cols) featuring REAL PROPERTIES */}
               <div className="lg:col-span-8 grid grid-cols-3 gap-3">
-                <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-md group">
+                <Link 
+                  href="/properties/standard-3-bedroom-bungalow-kara-oke-ose"
+                  className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-md group border border-slate-200"
+                >
                   <img
-                    src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=600&q=80"
-                    alt="Luxury Modern Villa"
+                    src="/images/property-kara-oke-ose.jpg"
+                    alt="Standard 3-Bedroom Bungalow & 2 Plots at Kara Oke Ose"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                  <span className="absolute bottom-2 left-2 text-[10px] font-bold text-white">Modern Villa</span>
-                </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                  <div className="absolute bottom-2 left-2 right-2 text-white">
+                    <span className="block text-[9px] font-black uppercase text-amber-300">Kara Oke Ose</span>
+                    <span className="text-[10px] font-bold truncate block">3-Bed Bungalow • ₦9.5M</span>
+                  </div>
+                </Link>
 
-                <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-md group">
+                <Link 
+                  href="/properties/prime-frontline-shops-rooms-eleko"
+                  className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-md group border border-slate-200"
+                >
                   <img
-                    src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=600&q=80"
-                    alt="Interior Living Lounge"
+                    src="/images/property-commercial-shops-eleko.jpg"
+                    alt="Frontline Commercial Shops with Borehole in Eleko"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                  <span className="absolute bottom-2 left-2 text-[10px] font-bold text-white">Living Lounge</span>
-                </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                  <div className="absolute bottom-2 left-2 right-2 text-white">
+                    <span className="block text-[9px] font-black uppercase text-sky-300">Eleko Corridor</span>
+                    <span className="text-[10px] font-bold truncate block">Shops & Rooms • ₦180k/yr</span>
+                  </div>
+                </Link>
 
-                <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-md group">
+                <Link 
+                  href="/properties/campus-serene-student-lodge-poly-gate"
+                  className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-md group border border-slate-200"
+                >
                   <img
-                    src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=600&q=80"
-                    alt="Student Hostel & Apartments"
+                    src="/images/hostel-student-lodge.jpg"
+                    alt="Student Hostel Lodge in Poly Gate"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                  <span className="absolute bottom-2 left-2 text-[10px] font-bold text-white">Student Block</span>
-                </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                  <div className="absolute bottom-2 left-2 right-2 text-white">
+                    <span className="block text-[9px] font-black uppercase text-emerald-300">Poly Gate Lodge</span>
+                    <span className="text-[10px] font-bold truncate block">Student Rooms • ₦130k/yr</span>
+                  </div>
+                </Link>
               </div>
 
               {/* Angled Badge (4 cols) matching flyer */}

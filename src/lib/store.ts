@@ -4,10 +4,10 @@ import { Property, Certificate, Enquiry, BusinessSettings } from '@/types/proper
 import { initialProperties, initialCertificates, initialSettings } from './initialData';
 
 const STORAGE_KEYS = {
-  PROPERTIES: 'rca_properties_v1',
-  CERTIFICATES: 'rca_certificates_v1',
-  SETTINGS: 'rca_settings_v1',
-  ENQUIRIES: 'rca_enquiries_v1',
+  PROPERTIES: 'rca_properties_v2',
+  CERTIFICATES: 'rca_certificates_v2',
+  SETTINGS: 'rca_settings_v2',
+  ENQUIRIES: 'rca_enquiries_v2',
 };
 
 // Safe localStorage helper

@@ -135,8 +135,15 @@ export default function AboutPage() {
           {/* Right: Agent Profile Card */}
           <div className="lg:col-span-5 bg-gradient-to-br from-[#0a192f] via-[#112240] to-[#1e3a8a] text-white p-8 rounded-3xl shadow-2xl space-y-6">
             <div className="text-center space-y-3">
-              <div className="w-24 h-24 rounded-full bg-amber-500/20 text-amber-300 border-2 border-amber-400 mx-auto flex items-center justify-center shadow-lg">
-                <Building2 className="w-12 h-12 text-sky-300" />
+              <div className="relative w-36 h-48 sm:w-44 sm:h-56 rounded-2xl border-4 border-amber-400 shadow-2xl overflow-hidden mx-auto bg-slate-800">
+                <img
+                  src="/images/agent-balogun-ridwan.jpg"
+                  alt="Balogun Ridwan Babatunde"
+                  className="w-full h-full object-cover object-top"
+                />
+                <div className="absolute bottom-2 right-2 p-1 rounded-full bg-emerald-500 text-white shadow-md">
+                  <ShieldCheck className="w-4 h-4" />
+                </div>
               </div>
 
               <div>
@@ -147,6 +154,9 @@ export default function AboutPage() {
                 <p className="text-xs text-sky-200 font-medium">
                   {businessName}
                 </p>
+                <div className="mt-2 inline-block px-2.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[10px] font-mono font-bold">
+                  CAC BN: 9992778 • TIN: 2622351035612
+                </div>
               </div>
             </div>
 

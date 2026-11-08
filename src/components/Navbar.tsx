@@ -165,6 +165,25 @@ export default function Navbar() {
 
         {/* Desktop Right CTAs */}
         <div className="hidden lg:flex items-center gap-3">
+          <Link
+            href="/about"
+            className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-slate-100 transition-colors group"
+            title="Balogun Ridwan Babatunde - Certified Real Estate Agent"
+          >
+            <div className="relative w-9 h-9 rounded-full overflow-hidden border-2 border-amber-400 shadow-sm shrink-0">
+              <img
+                src="/images/agent-balogun-ridwan.jpg"
+                alt="Balogun Ridwan Babatunde"
+                className="w-full h-full object-cover object-top"
+              />
+              <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border border-white rounded-full" />
+            </div>
+            <div className="text-left hidden xl:block">
+              <div className="text-xs font-black text-slate-900 leading-tight">Balogun Ridwan</div>
+              <div className="text-[10px] text-emerald-600 font-bold">CAC Verified</div>
+            </div>
+          </Link>
+
           <a
             href={getWhatsAppGeneralLink()}
             target="_blank"
