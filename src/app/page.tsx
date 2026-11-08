@@ -31,6 +31,7 @@ import {
 } from '@/lib/store';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+import FlyerHero from '@/components/FlyerHero';
 import PropertyCard from '@/components/PropertyCard';
 import InspectionModal from '@/components/InspectionModal';
 import ServicesSection from '@/components/ServicesSection';
@@ -136,97 +137,11 @@ export default function HomePage() {
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="relative min-h-[640px] lg:min-h-[720px] flex items-center justify-center bg-[#0a192f] text-white overflow-hidden py-20 px-4 sm:px-8">
-        {/* Luxury Modern House Background Image */}
-        <div className="absolute inset-0 z-0">
-          <img
-            src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2000&q=85"
-            alt="Luxury Modern Real Estate in Nigeria"
-            className="w-full h-full object-cover object-center brightness-40"
-          />
-          {/* Deep Navy/Royal Blue Gradient Overlays */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0a192f] via-[#0a192f]/85 to-[#0f244a]/80" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0a192f] via-transparent to-transparent" />
-        </div>
-
-        {/* Hero Content */}
-        <div className="relative z-10 max-w-5xl mx-auto text-center space-y-6">
-          {/* Certified Seal Pill */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-bold text-sky-300 shadow-xl">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-            <ShieldCheck className="w-4 h-4 text-emerald-400" />
-            <span>BALOGUN RIDWAN BABATUNDE • CERTIFIED REAL ESTATE AGENT</span>
-          </div>
-
-          {/* Main Heading */}
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight text-white leading-tight sm:leading-none">
-            FIND YOUR <span className="bg-gradient-to-r from-sky-400 via-blue-300 to-white bg-clip-text text-transparent">PERFECT</span> PROPERTY
-          </h1>
-
-          {/* Subtitle & Tagline */}
-          <div className="space-y-1">
-            <p className="text-xl sm:text-2xl font-bold text-sky-200 tracking-wide">
-              Your Dream Home Is Our Priority.
-            </p>
-            <p className="text-sm sm:text-base text-slate-300 font-medium max-w-2xl mx-auto">
-              "Real Estate. Real People. Real Results." — Verified houses, dry lands, commercial shops, and student hostels in Eleko, Poly Gate, Oke Ose & across Ilorin, Kwara State.
-            </p>
-          </div>
-
-          {/* CTA Buttons Row */}
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-            <a
-              href="#search-section"
-              className="px-6 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-sm sm:text-base shadow-lg shadow-blue-700/40 hover:scale-105 transition-all flex items-center gap-2"
-            >
-              <Search className="w-4 h-4" />
-              <span>Search Properties</span>
-            </a>
-
-            <Link
-              href="/hostels"
-              className="px-6 py-3.5 rounded-2xl bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-extrabold text-sm sm:text-base shadow-lg shadow-sky-600/30 hover:scale-105 transition-all flex items-center gap-2"
-            >
-              <GraduationCap className="w-5 h-5 text-amber-300" />
-              <span>Explore Student Hostels</span>
-            </Link>
-
-            <a
-              href={getWhatsAppGeneralLink()}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-6 py-3.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-sm sm:text-base shadow-lg shadow-emerald-700/40 hover:scale-105 transition-all flex items-center gap-2"
-            >
-              <MessageCircle className="w-5 h-5 fill-white" />
-              <span>Contact on WhatsApp</span>
-            </a>
-          </div>
-
-          {/* Trust Highlights */}
-          <div className="pt-4 grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl mx-auto text-xs text-slate-300 font-medium">
-            <div className="p-2.5 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 flex items-center justify-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              <span>Zero Fraud Guarantee</span>
-            </div>
-            <div className="p-2.5 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 flex items-center justify-center gap-2">
-              <GraduationCap className="w-4 h-4 text-sky-400" />
-              <span>Kwara Poly & UNILORIN</span>
-            </div>
-            <div className="p-2.5 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 flex items-center justify-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-amber-400" />
-              <span>Surveyor Verified</span>
-            </div>
-            <div className="p-2.5 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10 flex items-center justify-center gap-2">
-              <Phone className="w-4 h-4 text-emerald-400" />
-              <span>Direct: {phone}</span>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* FLYER REAL ESTATE SHOWCASE (Exact flyer design & WhatsApp connect) */}
+      <FlyerHero />
 
       {/* Main Interactive Search & Filter Section */}
-      <section id="search-section" className="relative -mt-12 z-20 max-w-7xl mx-auto px-4 sm:px-8 w-full">
+      <section id="search-section" className="relative z-20 max-w-7xl mx-auto px-4 sm:px-8 w-full mt-2">
         <PropertySearchFilter
           filters={filters}
           onFilterChange={setFilters}

@@ -51,15 +51,23 @@ export default function Footer() {
           {/* Col 1 & 2: Brand & Identity */}
           <div className="lg:col-span-2 space-y-4">
             <Link href="/" className="flex items-center gap-3">
-              <div className="flex items-center justify-center w-11 h-11 rounded-xl bg-gradient-to-br from-blue-600 to-sky-500 text-white shadow-md">
-                <Building2 className="w-6 h-6" />
+              <div className="relative w-12 h-12 shrink-0">
+                <svg viewBox="0 0 100 100" className="w-full h-full">
+                  <path d="M50 15 L15 45 L25 45 L50 24 L75 45 L85 45 Z" fill="#38bdf8" />
+                  <path d="M25 45 L25 78 L75 78 L75 45 Z" fill="#2563eb" />
+                  <rect x="40" y="42" width="8" height="8" rx="1" fill="#ffffff" />
+                  <rect x="52" y="42" width="8" height="8" rx="1" fill="#ffffff" />
+                  <rect x="40" y="54" width="8" height="8" rx="1" fill="#ffffff" />
+                  <rect x="52" y="54" width="8" height="8" rx="1" fill="#ffffff" />
+                  <path d="M10 82 Q 40 95 85 75 Q 92 72 88 84 Q 45 102 8 87 Z" fill="#38bdf8" />
+                </svg>
               </div>
               <div>
                 <span className="font-extrabold text-xl text-white tracking-tight">
                   RIDWANULLAHI
                 </span>
-                <span className="ml-2 text-xs uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-blue-500/20 text-sky-400 border border-blue-500/30">
-                  CERTIFIED AGENT
+                <span className="ml-2 text-xs uppercase font-black tracking-wider px-2 py-0.5 rounded bg-blue-600 text-white">
+                  CERTIFIED
                 </span>
                 <p className="text-xs text-slate-400 font-medium">BALOGUN RIDWAN BABATUNDE</p>
               </div>

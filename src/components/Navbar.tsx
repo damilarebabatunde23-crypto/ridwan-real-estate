@@ -107,25 +107,30 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-8 py-3.5 flex items-center justify-between">
         {/* Logo Treatment */}
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="relative flex items-center justify-center w-11 h-11 rounded-xl bg-gradient-to-br from-[#0a192f] via-[#1d4ed8] to-[#0ea5e9] text-white shadow-md shadow-blue-900/20 group-hover:scale-105 transition-transform">
-            <Building2 className="w-6 h-6 text-sky-200" />
-            <div className="absolute -bottom-1 -right-1 bg-amber-500 rounded-full p-0.5 border-2 border-white">
-              <ShieldCheck className="w-3 h-3 text-white" />
-            </div>
+          <div className="relative w-12 h-12 shrink-0 group-hover:scale-105 transition-transform">
+            <svg viewBox="0 0 100 100" className="w-full h-full">
+              <path d="M50 15 L15 45 L25 45 L50 24 L75 45 L85 45 Z" fill="#1d4ed8" />
+              <path d="M25 45 L25 78 L75 78 L75 45 Z" fill="#1e40af" />
+              <rect x="40" y="42" width="8" height="8" rx="1" fill="#ffffff" />
+              <rect x="52" y="42" width="8" height="8" rx="1" fill="#ffffff" />
+              <rect x="40" y="54" width="8" height="8" rx="1" fill="#ffffff" />
+              <rect x="52" y="54" width="8" height="8" rx="1" fill="#ffffff" />
+              <path d="M10 82 Q 40 95 85 75 Q 92 72 88 84 Q 45 102 8 87 Z" fill="#0ea5e9" />
+            </svg>
           </div>
           <div>
             <div className="flex items-center gap-1.5">
               <span className="font-extrabold tracking-tight text-lg sm:text-xl text-[#0a192f]">
                 RIDWANULLAHI
               </span>
-              <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 border border-blue-200">
+              <span className="text-[10px] uppercase font-black tracking-wider px-2 py-0.5 rounded bg-[#1e40af] text-white">
                 CERTIFIED
               </span>
             </div>
-            <div className="text-[11px] font-medium text-slate-500 tracking-wide flex items-center gap-1">
+            <div className="text-[11px] font-bold text-slate-600 tracking-wide flex items-center gap-1.5">
               <span>REAL ESTATE AGENT</span>
               <span className="text-slate-300">•</span>
-              <span className="text-sky-600 font-semibold">ILORIN, KWARA</span>
+              <span className="text-sky-600 font-bold">BUY | SELL | RENT</span>
             </div>
           </div>
         </Link>
