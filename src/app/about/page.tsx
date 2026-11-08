@@ -33,7 +33,7 @@ export default function AboutPage() {
 
   const fullName = settings?.fullName || 'BALOGUN RIDWAN BABATUNDE';
   const businessName = settings?.businessName || 'RIDWANULLAHI CERTIFIED AGENT';
-  const phone = settings?.phoneDisplay || '07082256257';
+  const phone = settings?.phoneDisplay || '09161116718';
   const email = settings?.email || 'Ridwanyunnus@gmail.com';
   const address = settings?.address || 'Eleko, Ilorin, Kwara State, Nigeria';
   const gbp = settings?.googleBusinessProfile || 'https://share.google/sjVg80f40cSexfRub';

@@ -38,8 +38,8 @@ export default function ContactPage() {
 
   const fullName = settings?.fullName || 'BALOGUN RIDWAN BABATUNDE';
   const businessName = settings?.businessName || 'RIDWANULLAHI CERTIFIED AGENT';
-  const phoneDisplay = settings?.phoneDisplay || '07082256257';
-  const phoneRaw = settings?.phone || '+2347082256257';
+  const phoneDisplay = settings?.phoneDisplay || '09161116718';
+  const phoneRaw = settings?.phone || '+2349161116718';
   const emailAddress = settings?.email || 'Ridwanyunnus@gmail.com';
   const address = settings?.address || 'Eleko, Ilorin, Kwara State, Nigeria';
   const gbp = settings?.googleBusinessProfile || 'https://share.google/sjVg80f40cSexfRub';
@@ -163,12 +163,12 @@ export default function ContactPage() {
                   <div>
                     <strong className="block text-emerald-950 font-bold text-sm">Direct WhatsApp</strong>
                     <a
-                      href={getWhatsAppGeneralLink()}
+                      href="https://wa.me/qr/W4VP4AFFIC5UC"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-emerald-700 font-bold hover:underline inline-block mt-0.5"
                     >
-                      Chat on wa.me/2347082256257 &rarr;
+                      Chat on wa.me/qr/W4VP4AFFIC5UC &rarr;
                     </a>
                   </div>
                 </div>
@@ -278,7 +278,7 @@ export default function ContactPage() {
                       <input
                         type="tel"
                         required
-                        placeholder="e.g. 07082256257"
+                        placeholder="e.g. 09161116718"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         className="w-full px-4 py-3 text-sm border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"

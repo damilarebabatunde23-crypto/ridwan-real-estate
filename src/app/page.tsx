@@ -131,7 +131,7 @@ export default function HomePage() {
     return properties.filter((p) => p.category === 'Student Hostels');
   }, [properties]);
 
-  const phone = settings?.phoneDisplay || '07082256257';
+  const phone = settings?.phoneDisplay || '09161116718';
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">

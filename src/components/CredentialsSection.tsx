@@ -38,7 +38,7 @@ export default function CredentialsSection() {
 
   const fullName = settings?.fullName || 'BALOGUN RIDWAN BABATUNDE';
   const businessName = settings?.businessName || 'RIDWANULLAHI CERTIFIED AGENT';
-  const phone = settings?.phoneDisplay || '07082256257';
+  const phone = settings?.phoneDisplay || '09161116718';
   const email = settings?.email || 'Ridwanyunnus@gmail.com';
   const address = settings?.address || 'Eleko, Ilorin, Kwara State, Nigeria';
 

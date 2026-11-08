@@ -27,6 +27,7 @@ export default function FlyerHero() {
   const [showFlyerModal, setShowFlyerModal] = useState(false);
   const [showCacModal, setShowCacModal] = useState(false);
   const [showAgentModal, setShowAgentModal] = useState(false);
+  const [showQrModal, setShowQrModal] = useState(false);
 
   const servicesCol1 = [
     {
@@ -198,9 +199,51 @@ export default function FlyerHero() {
         </div>
       )}
 
+      {/* WhatsApp QR Lightbox Modal */}
+      {showQrModal && (
+        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="relative max-w-md w-full bg-white rounded-3xl overflow-hidden shadow-2xl">
+            <div className="p-4 bg-[#0a192f] text-white flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <MessageCircle className="w-5 h-5 text-emerald-400" />
+                <span className="font-extrabold text-sm">Official WhatsApp Contact QR</span>
+              </div>
+              <button
+                onClick={() => setShowQrModal(false)}
+                className="p-1 rounded-lg hover:bg-white/10 text-slate-300 hover:text-white"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            <div className="p-4 bg-emerald-600 flex justify-center max-h-[75vh] overflow-y-auto">
+              <img
+                src="/images/ridwan-whatsapp-qr.jpg"
+                alt="Ridwanullahi WhatsApp QR Contact Code"
+                className="max-h-[65vh] w-auto object-contain rounded-2xl shadow-xl"
+              />
+            </div>
+            <div className="p-4 bg-slate-50 space-y-2 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-slate-900">Scan with WhatsApp camera</span>
+                <span className="text-emerald-700 font-extrabold text-sm">09161116718</span>
+              </div>
+              <a
+                href="https://wa.me/qr/W4VP4AFFIC5UC"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-center flex items-center justify-center gap-2 transition-colors"
+              >
+                <MessageCircle className="w-4 h-4 fill-white" />
+                <span>Open WhatsApp Direct Chat (wa.me/qr/W4VP4AFFIC5UC)</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* FLYER-STYLE MAIN CANVAS CONTAINER */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-4 pb-12">
-        {/* Floating Quick Action Buttons: CAC Certificate, Owner Photo, and Flyer */}
+        {/* Floating Quick Action Buttons: CAC Certificate, Owner Photo, WhatsApp QR, and Flyer */}
         <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
           <div className="flex flex-wrap items-center gap-2">
             <button
@@ -216,6 +259,13 @@ export default function FlyerHero() {
             >
               <Users className="w-3.5 h-3.5 text-blue-600" />
               <span>Meet Balogun Ridwan (Lead Agent)</span>
+            </button>
+            <button
+              onClick={() => setShowQrModal(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-teal-50 text-teal-800 hover:bg-teal-100 text-xs font-bold shadow-sm border border-teal-300 transition-all cursor-pointer"
+            >
+              <MessageCircle className="w-3.5 h-3.5 text-teal-600" />
+              <span>Official WhatsApp QR Card</span>
             </button>
           </div>
 
@@ -541,11 +591,11 @@ export default function FlyerHero() {
 
                 <div className="space-y-1">
                   <a
-                    href="tel:07082256257"
+                    href="tel:09161116718"
                     className="flex items-center gap-2 text-xl sm:text-2xl font-black text-white hover:text-emerald-400 transition-colors"
                   >
                     <Phone className="w-5 h-5 text-[#00a8ff]" />
-                    <span>07082256257</span>
+                    <span>09161116718</span>
                   </a>
                   <a
                     href="mailto:Ridwanyunnus@gmail.com"
@@ -559,42 +609,18 @@ export default function FlyerHero() {
 
               {/* Middle: WhatsApp Scan & Direct Chat */}
               <div className="flex items-center justify-center">
-                <a
-                  href={getWhatsAppGeneralLink()}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-4 bg-white/5 hover:bg-white/10 p-3 rounded-2xl border border-white/15 transition-all group"
-                  title="Click to Chat on WhatsApp"
-                >
-                  {/* Clean SVG QR Code Representation */}
-                  <div className="w-20 h-20 bg-white p-1 rounded-xl shrink-0 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
-                    <svg viewBox="0 0 100 100" className="w-full h-full text-slate-900">
-                      {/* Standard QR Code Matrix pattern */}
-                      <rect width="100" height="100" fill="white" />
-                      {/* Top-Left Corner Box */}
-                      <rect x="10" y="10" width="25" height="25" fill="#0a192f" rx="3" />
-                      <rect x="15" y="15" width="15" height="15" fill="white" />
-                      <rect x="19" y="19" width="7" height="7" fill="#0a192f" />
-                      {/* Top-Right Corner Box */}
-                      <rect x="65" y="10" width="25" height="25" fill="#0a192f" rx="3" />
-                      <rect x="70" y="15" width="15" height="15" fill="white" />
-                      <rect x="74" y="19" width="7" height="7" fill="#0a192f" />
-                      {/* Bottom-Left Corner Box */}
-                      <rect x="10" y="65" width="25" height="25" fill="#0a192f" rx="3" />
-                      <rect x="15" y="70" width="15" height="15" fill="white" />
-                      <rect x="19" y="74" width="7" height="7" fill="#0a192f" />
-                      {/* Data Dots & WhatsApp Center Icon */}
-                      <circle cx="50" cy="50" r="14" fill="#25D366" />
-                      <path d="M46 47 C46 45, 54 45, 54 47 C54 49, 52 50, 50 52 L50 54" stroke="white" strokeWidth="2" strokeLinecap="round" fill="none" />
-                      <circle cx="50" cy="57" r="1.5" fill="white" />
-                      {/* Random decorative grid points */}
-                      <rect x="42" y="15" width="6" height="6" fill="#0a192f" />
-                      <rect x="52" y="18" width="6" height="6" fill="#0a192f" />
-                      <rect x="42" y="75" width="6" height="6" fill="#0a192f" />
-                      <rect x="52" y="78" width="6" height="6" fill="#0a192f" />
-                      <rect x="75" y="45" width="6" height="6" fill="#0a192f" />
-                      <rect x="85" y="55" width="6" height="6" fill="#0a192f" />
-                    </svg>
+                <div className="flex items-center gap-4 bg-white/5 hover:bg-white/10 p-3 rounded-2xl border border-white/15 transition-all group">
+                  {/* Real WhatsApp QR Code Thumbnail with Lightbox */}
+                  <div
+                    onClick={() => setShowQrModal(true)}
+                    className="w-20 h-20 bg-white p-1 rounded-xl shrink-0 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform overflow-hidden cursor-pointer"
+                    title="Click to view full WhatsApp QR code card"
+                  >
+                    <img
+                      src="/images/ridwan-whatsapp-qr.jpg"
+                      alt="WhatsApp QR Code for Balogun Ridwan"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
 
                   <div className="space-y-1 text-left">
@@ -603,11 +629,16 @@ export default function FlyerHero() {
                       <span>WhatsApp</span>
                     </div>
                     <p className="text-[11px] text-slate-300">Click or Scan to connect</p>
-                    <span className="inline-block text-[10px] font-extrabold text-emerald-400 group-hover:underline">
-                      Open Direct Chat &rarr;
-                    </span>
+                    <a
+                      href="https://wa.me/qr/W4VP4AFFIC5UC"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block text-[10px] font-extrabold text-emerald-400 hover:text-emerald-300 underline"
+                    >
+                      Open wa.me/qr/W4VP4AFFIC5UC &rarr;
+                    </a>
                   </div>
-                </a>
+                </div>
               </div>
 
               {/* Right: Architectural Skyline Emblem */}

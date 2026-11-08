@@ -49,11 +49,11 @@ export default function Navbar() {
     { name: 'Contact', href: '/contact' },
   ];
 
-  const phone = settings?.phoneDisplay || '07082256257';
-  const rawPhone = settings?.phone || '+2347082256257';
+  const phone = settings?.phoneDisplay || '09161116718';
+  const rawPhone = settings?.phone || '+2349161116718';
   const email = settings?.email || 'Ridwanyunnus@gmail.com';
   const location = settings?.address || 'Eleko, Ilorin, Kwara State';
-  const whatsappCommunityLink = settings?.whatsappGroupLink || '[INSERT ACTIVE WHATSAPP GROUP INVITATION LINK]';
+  const whatsappCommunityLink = settings?.whatsappGroupLink || 'https://wa.me/qr/W4VP4AFFIC5UC';
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white shadow-md">

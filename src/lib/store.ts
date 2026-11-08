@@ -146,7 +146,15 @@ export function deleteCertificate(id: string): boolean {
 
 // Settings Store
 export function getSettings(): BusinessSettings {
-  return safeGet<BusinessSettings>(STORAGE_KEYS.SETTINGS, initialSettings);
+  const current = safeGet<BusinessSettings>(STORAGE_KEYS.SETTINGS, initialSettings);
+  // Auto-migrate if stored settings still contain old phone number or placeholder
+  if (current.phoneDisplay === '07082256257' || current.phone === '+2347082256257' || current.whatsappGroupLink?.includes('INSERT')) {
+    current.phone = '+2349161116718';
+    current.phoneDisplay = '09161116718';
+    current.whatsappGroupLink = 'https://wa.me/qr/W4VP4AFFIC5UC';
+    safeSet(STORAGE_KEYS.SETTINGS, current);
+  }
+  return current;
 }
 
 export function updateSettings(newSettings: Partial<BusinessSettings>): BusinessSettings {
@@ -198,13 +206,17 @@ export function resetToDefaults(): void {
   safeSet(STORAGE_KEYS.ENQUIRIES, []);
 }
 
-// WhatsApp Link Builders
-const WHATSAPP_NUMBER = '2347082256257';
+// WhatsApp Direct Links & Call Numbers
+export const WHATSAPP_DIRECT_LINK = 'https://wa.me/qr/W4VP4AFFIC5UC';
+export const WHATSAPP_NUMBER = '2349161116718';
+export const PHONE_CALL_DISPLAY = '09161116718';
+export const PHONE_CALL_RAW = '+2349161116718';
 
 export function getWhatsAppGeneralLink(customMessage?: string): string {
-  const text = customMessage || 
-    'Hello RIDWANULLAHI CERTIFIED AGENT, I visited your website and would like to inquire about your real estate services in Ilorin, Kwara State.';
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+  if (!customMessage) {
+    return WHATSAPP_DIRECT_LINK;
+  }
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(customMessage)}`;
 }
 
 export function getWhatsAppPropertyLink(property: Property): string {

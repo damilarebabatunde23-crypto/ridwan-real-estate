@@ -8,11 +8,11 @@ export const initialSettings: BusinessSettings = {
   businessName: 'RIDWANULLAHI CERTIFIED AGENT',
   slogan: 'Real Estate. Real People. Real Results.',
   tagline: 'Your Dream Home Is Our Priority.',
-  phone: '+2347082256257',
-  phoneDisplay: '07082256257',
+  phone: '+2349161116718',
+  phoneDisplay: '09161116718',
   email: 'Ridwanyunnus@gmail.com',
   address: '1, Elekoyangan, Ilorin, Kwara State, Nigeria',
-  whatsappGroupLink: '[INSERT ACTIVE WHATSAPP GROUP INVITATION LINK]',
+  whatsappGroupLink: 'https://wa.me/qr/W4VP4AFFIC5UC',
   googleBusinessProfile: 'https://share.google/sjVg80f40cSexfRub',
   linkedinProfile: 'https://www.linkedin.com/in/ridwanullahi-certified-61a689303',
   facebookProfile: 'https://www.facebook.com/profile.php?id=100075809320428',
@@ -273,6 +273,17 @@ export const initialCertificates: Certificate[] = [
     credentialId: 'BN: 9992778 | TIN: 2622351035612',
     description: 'Official Government Certificate of Registration issued under the Companies and Allied Matters Act 2020 by the Registrar-General Hussaini Ishaq Magaji SAN. Formally registering "RIDWANULLAHI REAL ESTATE AGENT" with principal address at 1, Elekoyangan, Ilorin, Kwara State, Nigeria to legally conduct real estate activities across Nigeria.',
     image: '/images/cac-certificate.jpg',
+    isVerified: true
+  },
+  // 2. OFFICIAL WHATSAPP DIRECT CONTACT QR CARD
+  {
+    id: 'cert-whatsapp-verified',
+    title: 'Official Ridwanullahi WhatsApp Verified Contact QR Card',
+    issuer: 'WhatsApp Verified Channel (Balogun Ridwan)',
+    issueDate: 'Active & Verified Channel',
+    credentialId: 'wa.me/qr/W4VP4AFFIC5UC | Call: 09161116718',
+    description: 'Official WhatsApp direct QR code contact card for Balogun Ridwan Babatunde (RIDWANULLAHI CERTIFIED AGENT). Allows direct encrypted inquiry, instant property video requests, hostel inspection scheduling, and verified documentation transfer.',
+    image: '/images/ridwan-whatsapp-qr.jpg',
     isVerified: true
   },
   {

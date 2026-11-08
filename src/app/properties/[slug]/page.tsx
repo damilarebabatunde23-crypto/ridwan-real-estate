@@ -99,7 +99,7 @@ function PropertyDetailContent({ params }: PageProps) {
     ? getWhatsAppHostelLink(property)
     : getWhatsAppPropertyLink(property);
 
-  const phone = settings?.phoneDisplay || '07082256257';
+  const phone = settings?.phoneDisplay || '09161116718';
 
   const handleShare = () => {
     if (typeof navigator !== 'undefined' && navigator.clipboard) {

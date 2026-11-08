@@ -5,7 +5,7 @@ import { Users, Bell, Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
 import { getSettings, getWhatsAppGeneralLink } from '@/lib/store';
 
 export default function WhatsAppCommunityBanner() {
-  const [whatsappLink, setWhatsappLink] = useState('[INSERT ACTIVE WHATSAPP GROUP INVITATION LINK]');
+  const [whatsappLink, setWhatsappLink] = useState('https://wa.me/qr/W4VP4AFFIC5UC');
 
   useEffect(() => {
     const settings = getSettings();
@@ -80,7 +80,7 @@ export default function WhatsAppCommunityBanner() {
               <ArrowRight className="w-4 h-4" />
             </a>
             <span className="text-[11px] text-slate-400 text-center">
-              Free to join • Connect with Balogun Ridwan (+2347082256257)
+              Free to join • Connect with Balogun Ridwan (09161116718)
             </span>
           </div>
         </div>
