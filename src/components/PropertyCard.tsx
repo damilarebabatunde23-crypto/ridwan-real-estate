@@ -17,7 +17,9 @@ import {
   ShieldCheck, 
   Sparkles,
   ChevronRight,
-  Info
+  Info,
+  Video,
+  Play
 } from 'lucide-react';
 import { Property } from '@/types/property';
 import { formatPriceWithPeriod, getWhatsAppPropertyLink, getWhatsAppHostelLink } from '@/lib/store';
@@ -104,6 +106,12 @@ export default function PropertyCard({
               <span className="px-2 py-1 rounded-full text-[11px] font-bold bg-sky-500 text-white shadow-sm flex items-center gap-1">
                 <GraduationCap className="w-3 h-3" />
                 Student Hostel
+              </span>
+            )}
+            {property.videoUrl && (
+              <span className="px-2 py-1 rounded-full text-[11px] font-bold bg-purple-600 text-white shadow-sm flex items-center gap-1">
+                <Video className="w-3 h-3 fill-white" />
+                Video Tour
               </span>
             )}
           </div>

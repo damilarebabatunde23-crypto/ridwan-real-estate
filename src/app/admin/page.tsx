@@ -32,7 +32,9 @@ import {
   Sparkles,
   UploadCloud,
   Camera,
-  X
+  X,
+  Video,
+  Play
 } from 'lucide-react';
 import { 
   Property, 
@@ -149,10 +151,12 @@ export default function AdminPage() {
     securityStatus: 'Uniformed Security Guard on Duty',
     distanceToCampus: '4 minutes walk to Kwara State Polytechnic Gate',
     nearbySchoolsText: 'Kwara State Polytechnic, Institute of Technology',
+    videoUrl: '',
   });
 
-  // State for image processing and upload controls
+  // State for image & video processing and upload controls
   const [isProcessingImages, setIsProcessingImages] = useState(false);
+  const [isProcessingVideo, setIsProcessingVideo] = useState(false);
   const [showManualUrlInput, setShowManualUrlInput] = useState(false);
   const [isProcessingCertImage, setIsProcessingCertImage] = useState(false);
 
@@ -276,6 +280,48 @@ export default function AdminPage() {
     }
   };
 
+  // Upload walkthrough video from device
+  const handleDeviceVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    const file = files[0];
+    if (!file.type.startsWith('video/')) {
+      showNotify('Please select a valid video file (.mp4, .mov, .webm, etc.)', 'error');
+      return;
+    }
+
+    // Size limit check: 50MB
+    if (file.size > 50 * 1024 * 1024) {
+      showNotify('Video file exceeds 50MB. Please select a shorter walkthrough clip or paste a YouTube link.', 'error');
+      return;
+    }
+
+    setIsProcessingVideo(true);
+    try {
+      const reader = new FileReader();
+      reader.onload = (uploadEvent) => {
+        const videoDataUrl = uploadEvent.target?.result as string;
+        setFormData((prev) => ({
+          ...prev,
+          videoUrl: videoDataUrl,
+        }));
+        showNotify('Video walkthrough clip uploaded successfully from device!');
+        setIsProcessingVideo(false);
+      };
+      reader.onerror = () => {
+        showNotify('Failed to read video file from device.', 'error');
+        setIsProcessingVideo(false);
+      };
+      reader.readAsDataURL(file);
+    } catch (err) {
+      console.error('Error processing device video:', err);
+      showNotify('Failed to upload video.', 'error');
+      setIsProcessingVideo(false);
+    } finally {
+      e.target.value = '';
+    }
+  };
+
   // Save new or edited property
   const handleSaveProperty = (e: React.FormEvent) => {
     e.preventDefault();
@@ -333,6 +379,7 @@ export default function AdminPage() {
       bathrooms: formData.bathrooms ? Number(formData.bathrooms) : undefined,
       sizeSqMeters: formData.sizeSqMeters ? Number(formData.sizeSqMeters) : undefined,
       images: finalImages,
+      videoUrl: formData.videoUrl.trim() || undefined,
       facilities,
       status: formData.status,
       isFeatured: formData.isFeatured,
@@ -378,6 +425,7 @@ export default function AdminPage() {
       securityStatus: 'Uniformed Security Guard on Duty',
       distanceToCampus: '4 minutes walk to Kwara State Polytechnic Gate',
       nearbySchoolsText: 'Kwara State Polytechnic, Institute of Technology',
+      videoUrl: '',
     });
 
     refreshData();
@@ -401,6 +449,7 @@ export default function AdminPage() {
       sizeSqMeters: prop.sizeSqMeters || 0,
       images: prop.images && prop.images.length > 0 ? [...prop.images] : [],
       imagesText: (prop.images || []).join('\n'),
+      videoUrl: prop.videoUrl || '',
       facilitiesText: (prop.facilities || []).join(', '),
       status: prop.status,
       isFeatured: prop.isFeatured,
@@ -1287,6 +1336,105 @@ export default function AdminPage() {
                           />
                         </div>
                       )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Property Video Walkthrough Tour */}
+                <div className="space-y-2 p-4 bg-slate-50/70 rounded-2xl border border-slate-200">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                      <Video className="w-4 h-4 text-purple-600" />
+                      <span>Property Video Walkthrough Tour (Device Video or Link)</span>
+                    </label>
+                    <span className="text-[10px] text-slate-400 font-medium">Optional - High conversion for students & buyers</span>
+                  </div>
+
+                  <p className="text-[11px] text-slate-500">
+                    Upload a walkthrough video clip straight from your phone / computer, or paste a YouTube / online video link.
+                  </p>
+
+                  {/* Video Preview if uploaded / linked */}
+                  {formData.videoUrl && (
+                    <div className="relative rounded-xl overflow-hidden border border-purple-200 bg-black aspect-video max-h-64 flex items-center justify-center">
+                      {formData.videoUrl.startsWith('data:video') || formData.videoUrl.match(/\.(mp4|webm|mov|ogg)($|\?)/i) ? (
+                        <video
+                          src={formData.videoUrl}
+                          controls
+                          playsInline
+                          className="w-full h-full object-contain"
+                        />
+                      ) : formData.videoUrl.includes('youtube.com') || formData.videoUrl.includes('youtu.be') ? (
+                        <div className="text-center p-4 text-white">
+                          <Play className="w-10 h-10 text-red-500 mx-auto mb-2 animate-pulse" />
+                          <p className="text-xs font-bold">YouTube Walkthrough Video Linked</p>
+                          <p className="text-[10px] text-slate-300 font-mono mt-1 truncate max-w-sm">{formData.videoUrl}</p>
+                        </div>
+                      ) : (
+                        <div className="text-center p-4 text-white">
+                          <Video className="w-10 h-10 text-purple-400 mx-auto mb-2" />
+                          <p className="text-xs font-bold">Online Video Link Attached</p>
+                          <p className="text-[10px] text-slate-300 font-mono mt-1 truncate max-w-sm">{formData.videoUrl}</p>
+                        </div>
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={() => setFormData({ ...formData, videoUrl: '' })}
+                        className="absolute top-2 right-2 bg-red-600/90 hover:bg-red-700 text-white p-1.5 rounded-lg text-xs flex items-center gap-1 shadow-lg transition-colors"
+                        title="Remove Video"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        <span className="text-[10px] font-bold">Remove</span>
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Upload / Link inputs */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+                    {/* Device Video Upload Button */}
+                    <label className={`flex flex-col items-center justify-center p-4 border-2 border-dashed rounded-xl cursor-pointer transition-all ${
+                      isProcessingVideo
+                        ? 'border-purple-300 bg-purple-50/50 cursor-wait'
+                        : 'border-purple-200 hover:border-purple-500 bg-purple-50/30 hover:bg-purple-50/70'
+                    }`}>
+                      <input
+                        type="file"
+                        accept="video/*"
+                        disabled={isProcessingVideo}
+                        onChange={handleDeviceVideoUpload}
+                        className="hidden"
+                      />
+                      <div className="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 mb-2">
+                        {isProcessingVideo ? (
+                          <div className="w-4 h-4 border-2 border-purple-600 border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                          <Video className="w-5 h-5" />
+                        )}
+                      </div>
+                      <span className="text-xs font-bold text-purple-900 text-center">
+                        {isProcessingVideo ? 'Reading video file...' : 'Upload Video from Phone / PC'}
+                      </span>
+                      <span className="text-[10px] text-purple-600/70 text-center mt-0.5">
+                        MP4, MOV, WebM (up to 50MB)
+                      </span>
+                    </label>
+
+                    {/* Or paste link */}
+                    <div className="flex flex-col justify-center p-3 border border-slate-200 rounded-xl bg-white space-y-1.5">
+                      <label className="text-[11px] font-bold text-slate-700 flex items-center gap-1">
+                        <span>Or Paste YouTube / Video Link:</span>
+                      </label>
+                      <input
+                        type="url"
+                        placeholder="https://youtu.be/... or https://youtube.com/watch?v=..."
+                        value={formData.videoUrl.startsWith('data:video') ? '' : formData.videoUrl}
+                        onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
+                        className="w-full p-2.5 text-xs border border-slate-300 rounded-lg outline-none focus:border-purple-500 font-mono"
+                      />
+                      <span className="text-[10px] text-slate-400">
+                        Pastes YouTube Shorts, YouTube watch links, or direct MP4 URL
+                      </span>
                     </div>
                   </div>
                 </div>

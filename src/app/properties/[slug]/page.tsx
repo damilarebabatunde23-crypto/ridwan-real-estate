@@ -20,7 +20,9 @@ import {
   Zap, 
   GraduationCap, 
   ChevronRight,
-  Info
+  Info,
+  Video,
+  Play
 } from 'lucide-react';
 import { Property, BusinessSettings } from '@/types/property';
 import { 
@@ -226,6 +228,56 @@ function PropertyDetailContent({ params }: PageProps) {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left Details (8 cols) */}
           <div className="lg:col-span-8 space-y-8">
+            {/* Video Walkthrough Tour Section (If Property Has Video) */}
+            {property.videoUrl && (
+              <div className="bg-[#0a192f] text-white rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-800 space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-10 h-10 rounded-xl bg-purple-600/30 text-purple-300 border border-purple-500/40 flex items-center justify-center">
+                      <Video className="w-5 h-5 text-purple-400" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg sm:text-xl font-black text-white">
+                        Property Video Walkthrough Tour
+                      </h3>
+                      <p className="text-xs text-slate-300">
+                        Live recorded video tour of the property and surroundings in {property.location}, Ilorin
+                      </p>
+                    </div>
+                  </div>
+                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-purple-500/20 text-purple-300 border border-purple-400/30 flex items-center gap-1.5">
+                    <Play className="w-3.5 h-3.5 fill-purple-400 text-purple-400" />
+                    HD Video Tour
+                  </span>
+                </div>
+
+                <div className="relative aspect-video w-full rounded-2xl overflow-hidden bg-black shadow-2xl border border-slate-700 flex items-center justify-center">
+                  {property.videoUrl.includes('youtube.com') || property.videoUrl.includes('youtu.be') ? (
+                    <iframe
+                      src={
+                        property.videoUrl.includes('watch?v=')
+                          ? property.videoUrl.replace('watch?v=', 'embed/')
+                          : property.videoUrl.includes('youtu.be/')
+                          ? property.videoUrl.replace('youtu.be/', 'www.youtube.com/embed/')
+                          : property.videoUrl
+                      }
+                      title={`Video tour for ${property.title}`}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="w-full h-full border-0"
+                    />
+                  ) : (
+                    <video
+                      src={property.videoUrl}
+                      controls
+                      playsInline
+                      className="w-full h-full object-contain"
+                      poster={property.images?.[0]}
+                    />
+                  )}
+                </div>
+              </div>
+            )}
             {/* Hostel Specific Card */}
             {isHostel && property.hostelDetails && (
               <div className="bg-sky-50/70 rounded-3xl p-6 sm:p-8 border border-sky-200 space-y-4">

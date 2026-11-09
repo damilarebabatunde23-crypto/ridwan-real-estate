@@ -46,6 +46,7 @@ export interface Property {
   sizeSqMeters?: number;
   images: string[];
   facilities: string[];
+  videoUrl?: string; // Video walkthrough tour (device upload or video link)
   status: AvailabilityStatus;
   isFeatured: boolean;
   isSampleListing: boolean; // Clearly labels sample listings as requested
