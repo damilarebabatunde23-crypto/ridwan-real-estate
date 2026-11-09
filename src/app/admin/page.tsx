@@ -29,7 +29,10 @@ import {
   Settings,
   ChevronRight,
   ShieldCheck,
-  Sparkles
+  Sparkles,
+  UploadCloud,
+  Camera,
+  X
 } from 'lucide-react';
 import { 
   Property, 
@@ -58,6 +61,42 @@ import {
 } from '@/lib/store';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
+
+// Helper to read and downsample images selected from device (phone/PC)
+function processImageFile(file: File, maxDim = 1280, quality = 0.82): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onerror = reject;
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          resolve(e.target?.result as string);
+          return;
+        }
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.src = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  });
+}
 
 export default function AdminPage() {
   // Authentication
@@ -93,7 +132,8 @@ export default function AdminPage() {
     bedrooms: 1,
     bathrooms: 1,
     sizeSqMeters: 0,
-    imagesText: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=1200&q=80',
+    images: [] as string[],
+    imagesText: '',
     facilitiesText: 'Running Borehole Water, Dedicated Prepaid Meter, Fenced with Gatehouse, Tiled Floor',
     status: 'AVAILABLE' as AvailabilityStatus,
     isFeatured: true,
@@ -110,6 +150,11 @@ export default function AdminPage() {
     distanceToCampus: '4 minutes walk to Kwara State Polytechnic Gate',
     nearbySchoolsText: 'Kwara State Polytechnic, Institute of Technology',
   });
+
+  // State for image processing and upload controls
+  const [isProcessingImages, setIsProcessingImages] = useState(false);
+  const [showManualUrlInput, setShowManualUrlInput] = useState(false);
+  const [isProcessingCertImage, setIsProcessingCertImage] = useState(false);
 
   // Settings form
   const [settingsForm, setSettingsForm] = useState<BusinessSettings | null>(null);
@@ -175,14 +220,80 @@ export default function AdminPage() {
     showNotify('Logged out from admin portal.');
   };
 
+  // Upload and optimize images selected from device (camera or gallery)
+  const handleDeviceImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setIsProcessingImages(true);
+    try {
+      const processed: string[] = [];
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (!file.type.startsWith('image/')) continue;
+        const dataUrl = await processImageFile(file, 1280, 0.82);
+        processed.push(dataUrl);
+      }
+      setFormData((prev) => ({
+        ...prev,
+        images: [...prev.images, ...processed],
+      }));
+      showNotify(`${processed.length} photo(s) added from your device!`);
+    } catch (err) {
+      console.error('Error processing device images:', err);
+      showNotify('Failed to process one or more images from device.', 'error');
+    } finally {
+      setIsProcessingImages(false);
+      e.target.value = '';
+    }
+  };
+
+  const handleRemoveImage = (indexToRemove: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      images: prev.images.filter((_, idx) => idx !== indexToRemove),
+    }));
+  };
+
+  // Upload certificate document from device
+  const handleCertImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    const file = files[0];
+    if (!file.type.startsWith('image/')) return;
+
+    setIsProcessingCertImage(true);
+    try {
+      const dataUrl = await processImageFile(file, 1400, 0.85);
+      setCertForm((prev) => ({ ...prev, image: dataUrl }));
+      showNotify('Certificate document uploaded from device!');
+    } catch (err) {
+      console.error('Error processing certificate image:', err);
+      showNotify('Failed to process certificate document.', 'error');
+    } finally {
+      setIsProcessingCertImage(false);
+      e.target.value = '';
+    }
+  };
+
   // Save new or edited property
   const handleSaveProperty = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const images = formData.imagesText
-      .split('\n')
-      .map((s) => s.trim())
-      .filter(Boolean);
+    // Combine images from device upload and any manual URLs
+    let finalImages = [...formData.images];
+    if (formData.imagesText.trim()) {
+      const manualImages = formData.imagesText
+        .split('\n')
+        .map((s) => s.trim())
+        .filter(Boolean);
+      for (const m of manualImages) {
+        if (!finalImages.includes(m)) finalImages.push(m);
+      }
+    }
+    if (finalImages.length === 0) {
+      finalImages = ['https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80'];
+    }
 
     const facilities = formData.facilitiesText
       .split(',')
@@ -221,7 +332,7 @@ export default function AdminPage() {
       bedrooms: formData.bedrooms ? Number(formData.bedrooms) : undefined,
       bathrooms: formData.bathrooms ? Number(formData.bathrooms) : undefined,
       sizeSqMeters: formData.sizeSqMeters ? Number(formData.sizeSqMeters) : undefined,
-      images: images.length > 0 ? images : ['https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=1200&q=80'],
+      images: finalImages,
       facilities,
       status: formData.status,
       isFeatured: formData.isFeatured,
@@ -237,6 +348,37 @@ export default function AdminPage() {
       addProperty(propertyPayload);
       showNotify(`New listing "${formData.title}" added to the public catalogue!`);
     }
+
+    // Reset form after saving
+    setFormData({
+      title: '',
+      category: 'Student Hostels',
+      purpose: 'rent',
+      price: 180000,
+      pricePeriod: 'year',
+      location: 'Poly Gate',
+      addressDetail: '',
+      description: '',
+      bedrooms: 1,
+      bathrooms: 1,
+      sizeSqMeters: 0,
+      images: [],
+      imagesText: '',
+      facilitiesText: 'Running Borehole Water, Dedicated Prepaid Meter, Fenced with Gatehouse, Tiled Floor',
+      status: 'AVAILABLE',
+      isFeatured: true,
+      isSampleListing: false,
+      hostelName: '',
+      area: 'Poly Gate',
+      roomType: 'Self-Contain with Kitchenette',
+      totalRooms: 10,
+      availableRooms: 3,
+      electricityStatus: 'Dedicated Transformer Line + Pre-paid Metres',
+      waterStatus: '24/7 Automatic Pumping Borehole',
+      securityStatus: 'Uniformed Security Guard on Duty',
+      distanceToCampus: '4 minutes walk to Kwara State Polytechnic Gate',
+      nearbySchoolsText: 'Kwara State Polytechnic, Institute of Technology',
+    });
 
     refreshData();
     setActiveTab('listings');
@@ -257,6 +399,7 @@ export default function AdminPage() {
       bedrooms: prop.bedrooms || 1,
       bathrooms: prop.bathrooms || 1,
       sizeSqMeters: prop.sizeSqMeters || 0,
+      images: prop.images && prop.images.length > 0 ? [...prop.images] : [],
       imagesText: (prop.images || []).join('\n'),
       facilitiesText: (prop.facilities || []).join(', '),
       status: prop.status,
@@ -1036,20 +1179,115 @@ export default function AdminPage() {
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
-                      Property Photographs URLs (One per line)
+                  {/* Property Photos Uploader (Upload from Device / Gallery + Previews) */}
+                  <div className="space-y-3 pt-2">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div>
+                        <label className="block text-xs font-black text-slate-900 uppercase tracking-wider">
+                          Property Photographs *
+                        </label>
+                        <p className="text-[11px] text-slate-500">
+                          Upload directly from your phone camera, gallery, or computer files.
+                        </p>
+                      </div>
+                      <span className="text-[11px] font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-200">
+                        {formData.images.length} photo{formData.images.length === 1 ? '' : 's'} ready
+                      </span>
+                    </div>
+
+                    {/* Big Tap to Upload Dropzone / Button */}
+                    <label className="relative border-2 border-dashed border-blue-300 hover:border-blue-500 bg-blue-50/40 hover:bg-blue-50 rounded-2xl p-6 flex flex-col items-center justify-center text-center cursor-pointer transition-all group shadow-sm">
+                      <input
+                        type="file"
+                        multiple
+                        accept="image/*"
+                        onChange={handleDeviceImageUpload}
+                        className="sr-only"
+                        disabled={isProcessingImages}
+                      />
+                      <div className="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center mb-3 shadow-md group-hover:scale-110 transition-transform">
+                        {isProcessingImages ? (
+                          <RefreshCw className="w-6 h-6 animate-spin" />
+                        ) : (
+                          <UploadCloud className="w-6 h-6" />
+                        )}
+                      </div>
+                      <div className="text-sm font-extrabold text-slate-900 group-hover:text-blue-700">
+                        {isProcessingImages ? 'Processing and optimizing photos...' : 'Tap to Upload Photos from Device'}
+                      </div>
+                      <p className="text-xs text-slate-500 mt-1 max-w-sm">
+                        Select one or multiple property photos from your phone gallery or desktop.
+                      </p>
+                      <div className="inline-flex items-center gap-1.5 mt-2 px-3 py-1 rounded-full bg-white text-blue-800 text-[11px] font-bold border border-blue-200 shadow-sm">
+                        <Camera className="w-3.5 h-3.5 text-blue-600" />
+                        <span>Select Gallery / Camera Files</span>
+                      </div>
                     </label>
-                    <textarea
-                      rows={3}
-                      placeholder="https://images.unsplash.com/photo-..."
-                      value={formData.imagesText}
-                      onChange={(e) => setFormData({ ...formData, imagesText: e.target.value })}
-                      className="w-full p-3 text-xs border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none font-mono"
-                    />
-                    <p className="text-[11px] text-slate-400 mt-1">
-                      Paste high-resolution image links. Multiple images enable the photo scroller and gallery view.
-                    </p>
+
+                    {/* Visual Thumbnail Grid */}
+                    {formData.images.length > 0 && (
+                      <div className="space-y-2 pt-1">
+                        <span className="text-[11px] font-bold text-slate-600 uppercase tracking-wider block">
+                          Photo Previews (First image is the main Cover Photo):
+                        </span>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                          {formData.images.map((imgUrl, idx) => (
+                            <div
+                              key={idx}
+                              className="relative group aspect-[4/3] rounded-xl overflow-hidden border-2 border-slate-200 bg-slate-100 shadow-sm"
+                            >
+                              <img
+                                src={imgUrl}
+                                alt={`Property photo ${idx + 1}`}
+                                className="w-full h-full object-cover"
+                              />
+                              {idx === 0 && (
+                                <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-600 text-white shadow">
+                                  Cover Photo
+                                </span>
+                              )}
+                              <button
+                                type="button"
+                                onClick={() => handleRemoveImage(idx)}
+                                className="absolute top-2 right-2 w-7 h-7 rounded-full bg-rose-600 hover:bg-rose-700 text-white flex items-center justify-center shadow-lg transition-transform hover:scale-110"
+                                title="Remove this photo"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                              <div className="absolute bottom-0 inset-x-0 bg-black/60 text-white text-[10px] text-center py-0.5 font-bold">
+                                Photo #{idx + 1}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Optional URL input toggle */}
+                    <div className="pt-1">
+                      <button
+                        type="button"
+                        onClick={() => setShowManualUrlInput(!showManualUrlInput)}
+                        className="text-xs text-blue-600 hover:text-blue-800 font-semibold underline flex items-center gap-1"
+                      >
+                        <span>{showManualUrlInput ? 'Hide manual image link input' : 'Or paste online image URLs instead'}</span>
+                      </button>
+
+                      {showManualUrlInput && (
+                        <div className="mt-2 p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+                          <label className="block text-[11px] font-bold text-slate-700 uppercase">
+                            Paste Image URLs (One link per line)
+                          </label>
+                          <textarea
+                            rows={2}
+                            placeholder="https://..."
+                            value={formData.imagesText}
+                            onChange={(e) => setFormData({ ...formData, imagesText: e.target.value })}
+                            className="w-full p-2.5 text-xs border border-slate-300 rounded-lg outline-none font-mono"
+                          />
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
 
@@ -1234,16 +1472,57 @@ export default function AdminPage() {
                     />
                   </div>
 
-                  <div className="sm:col-span-2">
-                    <label className="block font-bold text-slate-700 mb-1">Document Image URL *</label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="https://..."
-                      value={certForm.image}
-                      onChange={(e) => setCertForm({ ...certForm, image: e.target.value })}
-                      className="w-full p-2.5 border border-slate-300 rounded-xl outline-none font-mono"
-                    />
+                  <div className="sm:col-span-2 space-y-3">
+                    <label className="block font-bold text-slate-700">
+                      Document Photograph / Scan *
+                    </label>
+
+                    {/* Device Upload for Certificate */}
+                    <label className="border-2 border-dashed border-emerald-300 hover:border-emerald-500 bg-emerald-50/40 hover:bg-emerald-50 rounded-2xl p-5 flex flex-col items-center justify-center text-center cursor-pointer transition-all group shadow-sm">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleCertImageUpload}
+                        className="sr-only"
+                        disabled={isProcessingCertImage}
+                      />
+                      <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center mb-2 shadow group-hover:scale-110 transition-transform">
+                        {isProcessingCertImage ? (
+                          <RefreshCw className="w-5 h-5 animate-spin" />
+                        ) : (
+                          <UploadCloud className="w-5 h-5" />
+                        )}
+                      </div>
+                      <span className="text-xs font-bold text-emerald-950">
+                        {isProcessingCertImage ? 'Processing document...' : 'Upload Certificate from Device (Camera / File)'}
+                      </span>
+                      <span className="text-[11px] text-slate-500 mt-0.5">
+                        Select CAC document, land title, or accreditation scan from phone or computer
+                      </span>
+                    </label>
+
+                    {/* Preview if certificate image exists */}
+                    {certForm.image && (
+                      <div className="flex items-center gap-4 p-3 bg-slate-50 rounded-xl border border-slate-200">
+                        <div className="w-16 h-20 rounded-lg overflow-hidden border border-slate-300 shrink-0 bg-white shadow-sm">
+                          <img src={certForm.image} alt="Certificate preview" className="w-full h-full object-cover" />
+                        </div>
+                        <div className="space-y-1 text-xs">
+                          <span className="font-bold text-slate-900 block">Certificate Document Ready</span>
+                          <span className="text-emerald-700 text-[11px] font-semibold block">Attached and ready to publish</span>
+                        </div>
+                      </div>
+                    )}
+
+                    <div>
+                      <input
+                        type="text"
+                        placeholder="Or paste online document image URL (https://...)"
+                        value={certForm.image}
+                        onChange={(e) => setCertForm({ ...certForm, image: e.target.value })}
+                        className="w-full p-2 text-xs border border-slate-300 rounded-lg outline-none font-mono text-slate-600"
+                      />
+                    </div>
                   </div>
 
                   <div className="sm:col-span-2">
