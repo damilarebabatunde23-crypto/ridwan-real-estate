@@ -66,7 +66,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
 // Helper to read and downsample images selected from device (phone/PC)
-function processImageFile(file: File, maxDim = 1280, quality = 0.82): Promise<string> {
+function processImageFile(file: File, maxDim = 960, quality = 0.70): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.onerror = reject;
@@ -917,7 +917,7 @@ export default function AdminPage() {
                         </td>
                         <td className="py-3 px-3 text-right whitespace-nowrap space-x-1">
                           <Link
-                            href={`/properties/${prop.slug}`}
+                            href={`/properties/${prop.slug || prop.id}`}
                             target="_blank"
                             className="p-1.5 rounded-lg text-slate-500 hover:text-blue-600 hover:bg-slate-100 inline-block"
                             title="View Public Page"
@@ -941,6 +941,26 @@ export default function AdminPage() {
                         </td>
                       </tr>
                     ))}
+                    {filteredAdminProperties.length === 0 && (
+                      <tr>
+                        <td colSpan={7} className="py-12 text-center text-slate-400">
+                          <div className="flex flex-col items-center justify-center space-y-2">
+                            <Building2 className="w-8 h-8 text-slate-300" />
+                            <p className="font-semibold text-slate-600 text-xs">
+                              {searchTerm ? `No listings matching "${searchTerm}"` : 'No property listings found.'}
+                            </p>
+                            {searchTerm && (
+                              <button
+                                onClick={() => setSearchTerm('')}
+                                className="text-xs text-blue-600 font-bold hover:underline"
+                              >
+                                Clear search query
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    )}
                   </tbody>
                 </table>
               </div>

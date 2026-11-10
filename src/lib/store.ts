@@ -10,28 +10,45 @@ const STORAGE_KEYS = {
   ENQUIRIES: 'rca_enquiries_v2',
 };
 
-// Safe localStorage helper
+// In-memory cache to ensure session persistence across components
+const memoryCache: Record<string, any> = {};
+
+// Safe localStorage helper with sessionStorage fallback
 function safeGet<T>(key: string, fallback: T): T {
   if (typeof window === 'undefined') return fallback;
   try {
-    const item = window.localStorage.getItem(key);
-    if (!item) return fallback;
-    return JSON.parse(item) as T;
+    let item = window.localStorage.getItem(key);
+    if (!item) {
+      item = window.sessionStorage.getItem(key);
+    }
+    if (!item) {
+      if (memoryCache[key]) return memoryCache[key] as T;
+      return fallback;
+    }
+    const parsed = JSON.parse(item) as T;
+    memoryCache[key] = parsed;
+    return parsed;
   } catch (e) {
-    console.error(`Error reading ${key} from localStorage:`, e);
-    return fallback;
+    console.error(`Error reading ${key} from storage:`, e);
+    return memoryCache[key] || fallback;
   }
 }
 
 function safeSet<T>(key: string, value: T): void {
+  memoryCache[key] = value;
   if (typeof window === 'undefined') return;
   try {
     window.localStorage.setItem(key, JSON.stringify(value));
-    // Dispatch a storage event for same-tab reactive updates
-    window.dispatchEvent(new Event('rca_storage_updated'));
   } catch (e) {
-    console.error(`Error writing ${key} to localStorage:`, e);
+    console.warn(`Error writing ${key} to localStorage (quota or disabled). Using sessionStorage:`, e);
+    try {
+      window.sessionStorage.setItem(key, JSON.stringify(value));
+    } catch (_) {}
   }
+  // Dispatch a storage event for same-tab reactive updates
+  try {
+    window.dispatchEvent(new Event('rca_storage_updated'));
+  } catch (_) {}
 }
 
 // Format Naira currency cleanly
@@ -72,14 +89,46 @@ export function getPropertyById(id: string): Property | undefined {
 }
 
 export function getPropertyBySlug(slug: string): Property | undefined {
+  if (!slug) return undefined;
   const properties = getProperties();
-  return properties.find(p => p.slug === slug || p.id === slug);
+  const raw = slug.trim();
+  const clean = decodeURIComponent(raw).toLowerCase().trim();
+
+  // 1. Direct exact or lowercased match
+  let found = properties.find(
+    (p) =>
+      p.slug === raw ||
+      p.id === raw ||
+      (p.slug && p.slug.toLowerCase().trim() === clean) ||
+      (p.id && p.id.toLowerCase().trim() === clean)
+  );
+  if (found) return found;
+
+  // 2. Match without random suffix or partial slug
+  found = properties.find((p) => {
+    const pSlug = p.slug?.toLowerCase().trim() || '';
+    const pId = p.id?.toLowerCase().trim() || '';
+    return (
+      (pSlug && (clean.startsWith(pSlug) || pSlug.startsWith(clean))) ||
+      (pId && clean.includes(pId))
+    );
+  });
+  if (found) return found;
+
+  // 3. Match by slugified title directly
+  found = properties.find((p) => {
+    const titleSlug = slugify(p.title);
+    return titleSlug && (clean.includes(titleSlug) || titleSlug.includes(clean));
+  });
+
+  return found;
 }
 
 export function addProperty(propertyData: Omit<Property, 'id' | 'createdAt' | 'updatedAt' | 'slug'>): Property {
   const properties = getProperties();
   const id = 'prop-' + Date.now();
-  const slug = slugify(propertyData.title) + '-' + Math.random().toString(36).substring(2, 6);
+  const baseSlug = slugify(propertyData.title) || 'property';
+  const slug = `${baseSlug}-${Math.random().toString(36).substring(2, 6)}`;
   const now = new Date().toISOString();
 
   const newProperty: Property = {

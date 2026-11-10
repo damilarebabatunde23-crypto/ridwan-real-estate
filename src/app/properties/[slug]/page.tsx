@@ -51,6 +51,7 @@ function PropertyDetailContent({ params }: PageProps) {
   const slug = resolvedParams.slug;
 
   const [property, setProperty] = useState<Property | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [settings, setSettings] = useState<BusinessSettings | null>(null);
   const [activeImage, setActiveImage] = useState<string>('');
   const [playbackVideoUrl, setPlaybackVideoUrl] = useState<string>('');
@@ -59,22 +60,43 @@ function PropertyDetailContent({ params }: PageProps) {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    const found = getPropertyBySlug(slug);
-    if (found) {
-      setProperty(found);
-      setActiveImage(found.images?.[0] || '');
-      if (found.videoUrl) {
-        if (found.videoUrl.startsWith('idb:')) {
-          resolveVideoUrl(found.videoUrl).then((resolved) => {
-            if (resolved) setPlaybackVideoUrl(resolved);
-          });
-        } else {
-          setPlaybackVideoUrl(found.videoUrl);
+    const loadProperty = () => {
+      const found = getPropertyBySlug(slug);
+      if (found) {
+        setProperty(found);
+        setActiveImage(found.images?.[0] || '');
+        if (found.videoUrl) {
+          if (found.videoUrl.startsWith('idb:')) {
+            resolveVideoUrl(found.videoUrl).then((resolved) => {
+              if (resolved) setPlaybackVideoUrl(resolved);
+            });
+          } else {
+            setPlaybackVideoUrl(found.videoUrl);
+          }
         }
       }
-    }
-    setSettings(getSettings());
+      setIsLoading(false);
+      setSettings(getSettings());
+    };
+
+    loadProperty();
+
+    window.addEventListener('rca_storage_updated', loadProperty);
+    return () => window.removeEventListener('rca_storage_updated', loadProperty);
   }, [slug]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex flex-col bg-slate-50">
+        <Navbar />
+        <div className="flex-1 flex flex-col items-center justify-center p-12 text-center space-y-4">
+          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+          <p className="text-sm font-bold text-slate-600">Loading verified property listing...</p>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!property) {
     return (
@@ -88,18 +110,24 @@ function PropertyDetailContent({ params }: PageProps) {
           <p className="text-sm text-slate-500 max-w-md">
             This property listing may have been rented, sold, or updated in the catalog.
           </p>
-          <div className="pt-2 flex gap-3">
+          <div className="pt-2 flex flex-wrap gap-3 justify-center">
             <Link
               href="/properties"
-              className="px-5 py-2.5 rounded-xl bg-blue-600 text-white font-bold text-xs"
+              className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow"
             >
               Browse Available Properties
             </Link>
             <Link
               href="/hostels"
-              className="px-5 py-2.5 rounded-xl bg-[#0a192f] text-white font-bold text-xs"
+              className="px-5 py-2.5 rounded-xl bg-[#0a192f] hover:bg-slate-800 text-white font-bold text-xs shadow"
             >
               Browse Student Hostels
+            </Link>
+            <Link
+              href="/admin"
+              className="px-5 py-2.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-xs"
+            >
+              Return to Admin Backend
             </Link>
           </div>
         </div>
