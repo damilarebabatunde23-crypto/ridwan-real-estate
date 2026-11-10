@@ -22,7 +22,8 @@ import {
   ChevronRight,
   Info,
   Video,
-  Play
+  Play,
+  Image as ImageIcon
 } from 'lucide-react';
 import { Property, BusinessSettings } from '@/types/property';
 import { 
@@ -53,6 +54,7 @@ function PropertyDetailContent({ params }: PageProps) {
   const [settings, setSettings] = useState<BusinessSettings | null>(null);
   const [activeImage, setActiveImage] = useState<string>('');
   const [playbackVideoUrl, setPlaybackVideoUrl] = useState<string>('');
+  const [mediaTab, setMediaTab] = useState<'photos' | 'video'>('photos');
   const [isInspectionOpen, setIsInspectionOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -204,35 +206,123 @@ function PropertyDetailContent({ params }: PageProps) {
           </div>
         </div>
 
-        {/* Image Gallery */}
+        {/* Media Gallery (High Resolution Photos & Video Walkthrough) */}
         <div className="space-y-3">
-          <div className="relative aspect-[16/9] md:aspect-[21/9] w-full bg-slate-900 rounded-3xl overflow-hidden shadow-lg border border-slate-200">
-            <img
-              src={activeImage || property.images[0]}
-              alt={property.title}
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute top-4 left-4 bg-black/60 text-white text-xs px-3 py-1 rounded-full backdrop-blur-md">
-              High Resolution Property Photography
-            </div>
-          </div>
+          {/* Top Switcher Tabs when property has video */}
+          {property.videoUrl && (
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setMediaTab('photos')}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                  mediaTab === 'photos'
+                    ? 'bg-blue-600 text-white shadow-md'
+                    : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200'
+                }`}
+              >
+                <ImageIcon className="w-4 h-4" />
+                <span>Property Photos ({property.images?.length || 1})</span>
+              </button>
 
-          {/* Thumbnails Row */}
-          {property.images && property.images.length > 1 && (
-            <div className="flex items-center gap-3 overflow-x-auto pb-2">
-              {property.images.map((img, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setActiveImage(img)}
-                  className={`relative w-24 h-16 sm:w-32 sm:h-20 rounded-xl overflow-hidden border-2 transition-all shrink-0 ${
-                    activeImage === img ? 'border-blue-600 scale-95 shadow-md' : 'border-transparent opacity-70 hover:opacity-100'
-                  }`}
-                >
-                  <img src={img} alt={`Thumb ${idx + 1}`} className="w-full h-full object-cover" />
-                </button>
-              ))}
+              <button
+                type="button"
+                onClick={() => setMediaTab('video')}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+                  mediaTab === 'video'
+                    ? 'bg-purple-600 text-white shadow-md'
+                    : 'bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200'
+                }`}
+              >
+                <Play className="w-4 h-4 fill-current" />
+                <span>Walkthrough Video Tour</span>
+              </button>
             </div>
           )}
+
+          {/* Main Hero Screen */}
+          <div className="relative aspect-[16/9] md:aspect-[21/9] w-full bg-slate-900 rounded-3xl overflow-hidden shadow-lg border border-slate-200 flex items-center justify-center">
+            {mediaTab === 'video' && property.videoUrl ? (
+              property.videoUrl.includes('youtube.com') || property.videoUrl.includes('youtu.be') ? (
+                <iframe
+                  src={
+                    property.videoUrl.includes('watch?v=')
+                      ? property.videoUrl.replace('watch?v=', 'embed/')
+                      : property.videoUrl.includes('youtu.be/')
+                      ? property.videoUrl.replace('youtu.be/', 'www.youtube.com/embed/')
+                      : property.videoUrl
+                  }
+                  title={`Video tour for ${property.title}`}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="w-full h-full border-0"
+                />
+              ) : (
+                <video
+                  src={playbackVideoUrl || property.videoUrl}
+                  controls
+                  playsInline
+                  autoPlay
+                  className="w-full h-full object-contain"
+                  poster={property.images?.[0]}
+                />
+              )
+            ) : (
+              <>
+                <img
+                  src={activeImage || property.images[0]}
+                  alt={property.title}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute top-4 left-4 bg-black/60 text-white text-xs px-3 py-1 rounded-full backdrop-blur-md">
+                  High Resolution Property Photography
+                </div>
+                {property.videoUrl && (
+                  <button
+                    type="button"
+                    onClick={() => setMediaTab('video')}
+                    className="absolute inset-0 m-auto w-16 h-16 rounded-full bg-purple-600/90 hover:bg-purple-600 text-white flex items-center justify-center shadow-2xl backdrop-blur-sm border-2 border-white hover:scale-110 transition-transform z-10"
+                    title="Watch Walkthrough Video Tour"
+                  >
+                    <Play className="w-7 h-7 fill-white translate-x-0.5" />
+                  </button>
+                )}
+              </>
+            )}
+          </div>
+
+          {/* Thumbnails Row (includes Photos and Video button) */}
+          <div className="flex items-center gap-3 overflow-x-auto pb-2">
+            {property.videoUrl && (
+              <button
+                type="button"
+                onClick={() => setMediaTab('video')}
+                className={`relative w-24 h-16 sm:w-32 sm:h-20 rounded-xl overflow-hidden border-2 transition-all shrink-0 bg-purple-950 flex flex-col items-center justify-center text-white ${
+                  mediaTab === 'video' ? 'border-purple-500 scale-95 shadow-md ring-2 ring-purple-400' : 'border-purple-300/40 opacity-80 hover:opacity-100'
+                }`}
+              >
+                <div className="w-7 h-7 rounded-full bg-purple-600 flex items-center justify-center mb-1">
+                  <Play className="w-3.5 h-3.5 fill-white text-white translate-x-0.5" />
+                </div>
+                <span className="text-[10px] font-bold">Video Tour</span>
+              </button>
+            )}
+
+            {property.images && property.images.map((img, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => {
+                  setActiveImage(img);
+                  setMediaTab('photos');
+                }}
+                className={`relative w-24 h-16 sm:w-32 sm:h-20 rounded-xl overflow-hidden border-2 transition-all shrink-0 ${
+                  mediaTab === 'photos' && activeImage === img ? 'border-blue-600 scale-95 shadow-md' : 'border-transparent opacity-70 hover:opacity-100'
+                }`}
+              >
+                <img src={img} alt={`Thumb ${idx + 1}`} className="w-full h-full object-cover" />
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Detailed Grid: Left Info, Right Agent Contact Card */}
