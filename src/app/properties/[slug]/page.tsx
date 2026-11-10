@@ -34,6 +34,7 @@ import {
   getWhatsAppHostelLink,
   getWhatsAppGeneralLink 
 } from '@/lib/store';
+import { resolveVideoUrl } from '@/lib/videoStorage';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import InspectionModal from '@/components/InspectionModal';
@@ -51,6 +52,7 @@ function PropertyDetailContent({ params }: PageProps) {
   const [property, setProperty] = useState<Property | null>(null);
   const [settings, setSettings] = useState<BusinessSettings | null>(null);
   const [activeImage, setActiveImage] = useState<string>('');
+  const [playbackVideoUrl, setPlaybackVideoUrl] = useState<string>('');
   const [isInspectionOpen, setIsInspectionOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -59,6 +61,15 @@ function PropertyDetailContent({ params }: PageProps) {
     if (found) {
       setProperty(found);
       setActiveImage(found.images?.[0] || '');
+      if (found.videoUrl) {
+        if (found.videoUrl.startsWith('idb:')) {
+          resolveVideoUrl(found.videoUrl).then((resolved) => {
+            if (resolved) setPlaybackVideoUrl(resolved);
+          });
+        } else {
+          setPlaybackVideoUrl(found.videoUrl);
+        }
+      }
     }
     setSettings(getSettings());
   }, [slug]);
@@ -268,7 +279,7 @@ function PropertyDetailContent({ params }: PageProps) {
                     />
                   ) : (
                     <video
-                      src={property.videoUrl}
+                      src={playbackVideoUrl || property.videoUrl}
                       controls
                       playsInline
                       className="w-full h-full object-contain"

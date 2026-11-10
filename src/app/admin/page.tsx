@@ -61,6 +61,7 @@ import {
   formatNaira, 
   formatPriceWithPeriod 
 } from '@/lib/store';
+import { saveVideoBlob, resolveVideoUrl, deleteVideoBlob } from '@/lib/videoStorage';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
@@ -157,6 +158,7 @@ export default function AdminPage() {
   // State for image & video processing and upload controls
   const [isProcessingImages, setIsProcessingImages] = useState(false);
   const [isProcessingVideo, setIsProcessingVideo] = useState(false);
+  const [videoPreviewUrl, setVideoPreviewUrl] = useState<string>('');
   const [showManualUrlInput, setShowManualUrlInput] = useState(false);
   const [isProcessingCertImage, setIsProcessingCertImage] = useState(false);
 
@@ -280,7 +282,7 @@ export default function AdminPage() {
     }
   };
 
-  // Upload walkthrough video from device
+  // Upload walkthrough video from device (unrestricted size via IndexedDB)
   const handleDeviceVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
@@ -290,34 +292,23 @@ export default function AdminPage() {
       return;
     }
 
-    // Size limit check: 50MB
-    if (file.size > 50 * 1024 * 1024) {
-      showNotify('Video file exceeds 50MB. Please select a shorter walkthrough clip or paste a YouTube link.', 'error');
-      return;
-    }
-
     setIsProcessingVideo(true);
     try {
-      const reader = new FileReader();
-      reader.onload = (uploadEvent) => {
-        const videoDataUrl = uploadEvent.target?.result as string;
-        setFormData((prev) => ({
-          ...prev,
-          videoUrl: videoDataUrl,
-        }));
-        showNotify('Video walkthrough clip uploaded successfully from device!');
-        setIsProcessingVideo(false);
-      };
-      reader.onerror = () => {
-        showNotify('Failed to read video file from device.', 'error');
-        setIsProcessingVideo(false);
-      };
-      reader.readAsDataURL(file);
+      // Save directly to browser IndexedDB without any size restriction
+      const videoKey = await saveVideoBlob(file);
+      const previewUrl = URL.createObjectURL(file);
+      setVideoPreviewUrl(previewUrl);
+      setFormData((prev) => ({
+        ...prev,
+        videoUrl: videoKey,
+      }));
+      const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
+      showNotify(`Video attached (${sizeMB} MB) without restriction!`);
     } catch (err) {
-      console.error('Error processing device video:', err);
-      showNotify('Failed to upload video.', 'error');
-      setIsProcessingVideo(false);
+      console.error('Error saving device video:', err);
+      showNotify('Failed to process video from device.', 'error');
     } finally {
+      setIsProcessingVideo(false);
       e.target.value = '';
     }
   };
@@ -427,6 +418,7 @@ export default function AdminPage() {
       nearbySchoolsText: 'Kwara State Polytechnic, Institute of Technology',
       videoUrl: '',
     });
+    setVideoPreviewUrl('');
 
     refreshData();
     setActiveTab('listings');
@@ -435,6 +427,12 @@ export default function AdminPage() {
   // Edit action
   const startEditProperty = (prop: Property) => {
     setEditingProperty(prop);
+    const vUrl = prop.videoUrl || '';
+    if (vUrl.startsWith('idb:')) {
+      resolveVideoUrl(vUrl).then((resolved) => setVideoPreviewUrl(resolved));
+    } else {
+      setVideoPreviewUrl(vUrl);
+    }
     setFormData({
       title: prop.title,
       category: prop.category,
@@ -470,6 +468,10 @@ export default function AdminPage() {
 
   const handleDeleteProperty = (id: string, title: string) => {
     if (confirm(`Are you sure you want to delete "${title}"?`)) {
+      const propToDelete = properties.find((p) => p.id === id);
+      if (propToDelete?.videoUrl) {
+        deleteVideoBlob(propToDelete.videoUrl);
+      }
       deleteProperty(id);
       showNotify(`Listing deleted.`, 'error');
       refreshData();
@@ -1355,11 +1357,11 @@ export default function AdminPage() {
                   </p>
 
                   {/* Video Preview if uploaded / linked */}
-                  {formData.videoUrl && (
+                  {(videoPreviewUrl || formData.videoUrl) && (
                     <div className="relative rounded-xl overflow-hidden border border-purple-200 bg-black aspect-video max-h-64 flex items-center justify-center">
-                      {formData.videoUrl.startsWith('data:video') || formData.videoUrl.match(/\.(mp4|webm|mov|ogg)($|\?)/i) ? (
+                      {(videoPreviewUrl || formData.videoUrl).startsWith('blob:') || (videoPreviewUrl || formData.videoUrl).startsWith('data:video') || (videoPreviewUrl || formData.videoUrl).match(/\.(mp4|webm|mov|ogg)($|\?)/i) ? (
                         <video
-                          src={formData.videoUrl}
+                          src={videoPreviewUrl || formData.videoUrl}
                           controls
                           playsInline
                           className="w-full h-full object-contain"
@@ -1380,7 +1382,10 @@ export default function AdminPage() {
 
                       <button
                         type="button"
-                        onClick={() => setFormData({ ...formData, videoUrl: '' })}
+                        onClick={() => {
+                          setFormData({ ...formData, videoUrl: '' });
+                          setVideoPreviewUrl('');
+                        }}
                         className="absolute top-2 right-2 bg-red-600/90 hover:bg-red-700 text-white p-1.5 rounded-lg text-xs flex items-center gap-1 shadow-lg transition-colors"
                         title="Remove Video"
                       >
@@ -1413,10 +1418,10 @@ export default function AdminPage() {
                         )}
                       </div>
                       <span className="text-xs font-bold text-purple-900 text-center">
-                        {isProcessingVideo ? 'Reading video file...' : 'Upload Video from Phone / PC'}
+                        {isProcessingVideo ? 'Saving video to storage...' : 'Upload Video from Phone / PC'}
                       </span>
                       <span className="text-[10px] text-purple-600/70 text-center mt-0.5">
-                        MP4, MOV, WebM (up to 50MB)
+                        MP4, MOV, WebM (No size limit — high resolution phone videos supported)
                       </span>
                     </label>
 
@@ -1428,8 +1433,11 @@ export default function AdminPage() {
                       <input
                         type="url"
                         placeholder="https://youtu.be/... or https://youtube.com/watch?v=..."
-                        value={formData.videoUrl.startsWith('data:video') ? '' : formData.videoUrl}
-                        onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
+                        value={formData.videoUrl.startsWith('idb:') || formData.videoUrl.startsWith('data:video') ? '' : formData.videoUrl}
+                        onChange={(e) => {
+                          setFormData({ ...formData, videoUrl: e.target.value });
+                          setVideoPreviewUrl(e.target.value);
+                        }}
                         className="w-full p-2.5 text-xs border border-slate-300 rounded-lg outline-none focus:border-purple-500 font-mono"
                       />
                       <span className="text-[10px] text-slate-400">
