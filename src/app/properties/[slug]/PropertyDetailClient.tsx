@@ -36,7 +36,7 @@ import {
   getWhatsAppGeneralLink,
   syncFromCloud
 } from '@/lib/store';
-import { resolveVideoUrl } from '@/lib/videoStorage';
+import { resolveVideoUrl, parseVideoSource } from '@/lib/videoStorage';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import InspectionModal from '@/components/InspectionModal';
@@ -54,12 +54,35 @@ export default function PropertyDetailClient({ slug }: PropertyDetailClientProps
   const [settings, setSettings] = useState<BusinessSettings | null>(null);
   const [activeImage, setActiveImage] = useState<string>('');
   const [playbackVideoUrl, setPlaybackVideoUrl] = useState<string>('');
+  const [isResolvingVideo, setIsResolvingVideo] = useState<boolean>(false);
+  const [videoLoadError, setVideoLoadError] = useState<boolean>(false);
   const [mediaTab, setMediaTab] = useState<'photos' | 'video'>('photos');
   const [isInspectionOpen, setIsInspectionOpen] = useState(false);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     let isMounted = true;
+    setVideoLoadError(false);
+
+    const resolvePropertyMedia = (p: Property) => {
+      if (p.videoUrl) {
+        if (p.videoUrl.startsWith('idb:')) {
+          setIsResolvingVideo(true);
+          resolveVideoUrl(p.videoUrl).then((resolved) => {
+            if (isMounted) {
+              setPlaybackVideoUrl(resolved || '');
+              setIsResolvingVideo(false);
+            }
+          });
+        } else {
+          setPlaybackVideoUrl(p.videoUrl);
+          setIsResolvingVideo(false);
+        }
+      } else {
+        setPlaybackVideoUrl('');
+        setIsResolvingVideo(false);
+      }
+    };
 
     const loadProperty = async () => {
       let found = getPropertyBySlug(slug);
@@ -76,15 +99,7 @@ export default function PropertyDetailClient({ slug }: PropertyDetailClientProps
       if (found) {
         setProperty(found);
         setActiveImage(found.images?.[0] || '');
-        if (found.videoUrl) {
-          if (found.videoUrl.startsWith('idb:')) {
-            resolveVideoUrl(found.videoUrl).then((resolved) => {
-              if (resolved && isMounted) setPlaybackVideoUrl(resolved);
-            });
-          } else {
-            setPlaybackVideoUrl(found.videoUrl);
-          }
-        }
+        resolvePropertyMedia(found);
       }
       setIsLoading(false);
       setSettings(getSettings());
@@ -97,6 +112,7 @@ export default function PropertyDetailClient({ slug }: PropertyDetailClientProps
       if (refreshed && isMounted) {
         setProperty(refreshed);
         setActiveImage(refreshed.images?.[0] || '');
+        resolvePropertyMedia(refreshed);
       }
       if (isMounted) setSettings(getSettings());
     };
@@ -174,6 +190,72 @@ export default function PropertyDetailClient({ slug }: PropertyDetailClientProps
       setCopied(true);
       setTimeout(() => setCopied(false), 2500);
     }
+  };
+
+  const renderVideoPlayer = (autoPlay: boolean) => {
+    if (isResolvingVideo) {
+      return (
+        <div className="text-center text-white space-y-2 p-6">
+          <div className="w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-xs text-slate-300 font-medium">Loading video tour...</p>
+        </div>
+      );
+    }
+
+    const parsed = parseVideoSource(playbackVideoUrl);
+
+    if (parsed.type === 'unavailable' || videoLoadError) {
+      return (
+        <div className="text-center text-white space-y-3 p-6 max-w-sm mx-auto">
+          <Video className="w-10 h-10 text-purple-400 mx-auto" />
+          <p className="text-sm font-bold text-white">
+            {property.videoUrl?.startsWith('idb:')
+              ? 'Video Not Synced to Cloud Yet'
+              : 'Unable to Play Video on This Device'}
+          </p>
+          <p className="text-xs text-slate-300 leading-relaxed">
+            {property.videoUrl?.startsWith('idb:')
+              ? 'This video was saved offline on another device. Please re-upload it in Admin or request it directly via WhatsApp.'
+              : 'Your browser could not stream this video format. Request the full walkthrough video directly on WhatsApp.'}
+          </p>
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-lg"
+          >
+            <MessageCircle className="w-4 h-4" />
+            <span>Request Video on WhatsApp</span>
+          </a>
+        </div>
+      );
+    }
+
+    if (parsed.type === 'iframe') {
+      return (
+        <iframe
+          src={parsed.src}
+          title={`Video tour for ${property.title}`}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          className="w-full h-full border-0"
+        />
+      );
+    }
+
+    return (
+      <video
+        src={parsed.src}
+        controls
+        playsInline
+        muted={autoPlay}
+        autoPlay={autoPlay}
+        preload="metadata"
+        onError={() => setVideoLoadError(true)}
+        className="w-full h-full object-contain"
+        poster={property.images?.[0]}
+      />
+    );
   };
 
   return (
@@ -293,30 +375,7 @@ export default function PropertyDetailClient({ slug }: PropertyDetailClientProps
           {/* Main Hero Screen */}
           <div className="relative aspect-[16/9] md:aspect-[21/9] w-full bg-slate-900 rounded-3xl overflow-hidden shadow-lg border border-slate-200 flex items-center justify-center">
             {mediaTab === 'video' && property.videoUrl ? (
-              property.videoUrl.includes('youtube.com') || property.videoUrl.includes('youtu.be') ? (
-                <iframe
-                  src={
-                    property.videoUrl.includes('watch?v=')
-                      ? property.videoUrl.replace('watch?v=', 'embed/')
-                      : property.videoUrl.includes('youtu.be/')
-                      ? property.videoUrl.replace('youtu.be/', 'www.youtube.com/embed/')
-                      : property.videoUrl
-                  }
-                  title={`Video tour for ${property.title}`}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  className="w-full h-full border-0"
-                />
-              ) : (
-                <video
-                  src={playbackVideoUrl || property.videoUrl}
-                  controls
-                  playsInline
-                  autoPlay
-                  className="w-full h-full object-contain"
-                  poster={property.images?.[0]}
-                />
-              )
+              renderVideoPlayer(true)
             ) : (
               <>
                 <img
@@ -404,29 +463,7 @@ export default function PropertyDetailClient({ slug }: PropertyDetailClientProps
                 </div>
 
                 <div className="relative aspect-video w-full rounded-2xl overflow-hidden bg-black shadow-2xl border border-slate-700 flex items-center justify-center">
-                  {property.videoUrl.includes('youtube.com') || property.videoUrl.includes('youtu.be') ? (
-                    <iframe
-                      src={
-                        property.videoUrl.includes('watch?v=')
-                          ? property.videoUrl.replace('watch?v=', 'embed/')
-                          : property.videoUrl.includes('youtu.be/')
-                          ? property.videoUrl.replace('youtu.be/', 'www.youtube.com/embed/')
-                          : property.videoUrl
-                      }
-                      title={`Video tour for ${property.title}`}
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                      className="w-full h-full border-0"
-                    />
-                  ) : (
-                    <video
-                      src={playbackVideoUrl || property.videoUrl}
-                      controls
-                      playsInline
-                      className="w-full h-full object-contain"
-                      poster={property.images?.[0]}
-                    />
-                  )}
+                  {renderVideoPlayer(false)}
                 </div>
               </div>
             )}

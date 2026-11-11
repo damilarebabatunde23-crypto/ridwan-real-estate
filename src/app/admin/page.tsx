@@ -66,7 +66,7 @@ import {
   getSupabaseCredentials, 
   saveLocalSupabaseCredentials 
 } from '@/lib/supabase';
-import { saveVideoBlob, resolveVideoUrl, deleteVideoBlob } from '@/lib/videoStorage';
+import { saveVideoBlob, resolveVideoUrl, deleteVideoBlob, uploadVideoToCloud } from '@/lib/videoStorage';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 
@@ -328,7 +328,7 @@ export default function AdminPage() {
     }
   };
 
-  // Upload walkthrough video from device (unrestricted size via IndexedDB)
+  // Upload walkthrough video from device directly to Supabase Cloud Storage (fallback to IndexedDB if offline)
   const handleDeviceVideoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
@@ -340,19 +340,24 @@ export default function AdminPage() {
 
     setIsProcessingVideo(true);
     try {
-      // Save directly to browser IndexedDB without any size restriction
-      const videoKey = await saveVideoBlob(file);
+      const result = await uploadVideoToCloud(file);
       const previewUrl = URL.createObjectURL(file);
       setVideoPreviewUrl(previewUrl);
       setFormData((prev) => ({
         ...prev,
-        videoUrl: videoKey,
+        videoUrl: result.url,
       }));
       const sizeMB = (file.size / (1024 * 1024)).toFixed(1);
-      showNotify(`Video attached (${sizeMB} MB) without restriction!`);
+      if (result.storageType === 'cloud') {
+        showNotify(`Video uploaded to cloud (${sizeMB} MB)! Ready to play on all mobile devices.`);
+      } else if (result.error) {
+        showNotify(result.error, 'error');
+      } else {
+        showNotify(`Video attached locally (${sizeMB} MB). Connect Supabase for mobile playback.`);
+      }
     } catch (err) {
-      console.error('Error saving device video:', err);
-      showNotify('Failed to process video from device.', 'error');
+      console.error('Error uploading device video:', err);
+      showNotify('Failed to upload video from device.', 'error');
     } finally {
       setIsProcessingVideo(false);
       e.target.value = '';

@@ -24,7 +24,7 @@ import {
 } from 'lucide-react';
 import { Property } from '@/types/property';
 import { formatPriceWithPeriod, getWhatsAppPropertyLink, getWhatsAppHostelLink } from '@/lib/store';
-import { resolveVideoUrl } from '@/lib/videoStorage';
+import { resolveVideoUrl, parseVideoSource } from '@/lib/videoStorage';
 
 interface PropertyCardProps {
   property: Property;
@@ -40,16 +40,25 @@ export default function PropertyCard({
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [isPlayingVideo, setIsPlayingVideo] = useState(false);
   const [resolvedVideoUrl, setResolvedVideoUrl] = useState<string>('');
+  const [isResolvingVideo, setIsResolvingVideo] = useState(false);
+  const [videoLoadError, setVideoLoadError] = useState(false);
 
   useEffect(() => {
+    setVideoLoadError(false);
     if (property.videoUrl) {
       if (property.videoUrl.startsWith('idb:')) {
+        setIsResolvingVideo(true);
         resolveVideoUrl(property.videoUrl).then((url) => {
-          if (url) setResolvedVideoUrl(url);
+          setResolvedVideoUrl(url || '');
+          setIsResolvingVideo(false);
         });
       } else {
         setResolvedVideoUrl(property.videoUrl);
+        setIsResolvingVideo(false);
       }
+    } else {
+      setResolvedVideoUrl('');
+      setIsResolvingVideo(false);
     }
   }, [property.videoUrl]);
 
@@ -101,32 +110,74 @@ export default function PropertyCard({
     <div className="group bg-white rounded-2xl overflow-hidden border border-slate-200/80 hover:border-blue-400 hover:shadow-xl transition-all duration-300 flex flex-col h-full">
       {/* Image / Video Container */}
       <div className="relative aspect-[16/10] w-full overflow-hidden bg-slate-900">
-        {isPlayingVideo && (resolvedVideoUrl || property.videoUrl) ? (
+        {isPlayingVideo && property.videoUrl ? (
           <div className="relative w-full h-full bg-black flex items-center justify-center">
-            {property.videoUrl?.includes('youtube.com') || property.videoUrl?.includes('youtu.be') ? (
-              <iframe
-                src={
-                  property.videoUrl.includes('watch?v=')
-                    ? property.videoUrl.replace('watch?v=', 'embed/')
-                    : property.videoUrl.includes('youtu.be/')
-                    ? property.videoUrl.replace('youtu.be/', 'www.youtube.com/embed/')
-                    : property.videoUrl
-                }
-                title={`Video tour for ${property.title}`}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="w-full h-full border-0"
-              />
-            ) : (
-              <video
-                src={resolvedVideoUrl || property.videoUrl}
-                controls
-                playsInline
-                autoPlay
-                className="w-full h-full object-contain"
-                poster={images[0]}
-              />
-            )}
+            {(() => {
+              if (isResolvingVideo) {
+                return (
+                  <div className="text-center text-white space-y-2 p-4">
+                    <div className="w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto" />
+                    <p className="text-xs text-slate-300 font-medium">Loading video tour...</p>
+                  </div>
+                );
+              }
+
+              const parsed = parseVideoSource(resolvedVideoUrl);
+
+              if (parsed.type === 'unavailable' || videoLoadError) {
+                return (
+                  <div className="text-center text-white space-y-2.5 p-5 max-w-xs">
+                    <Video className="w-8 h-8 text-purple-400 mx-auto" />
+                    <p className="text-xs font-bold text-white">
+                      {property.videoUrl?.startsWith('idb:')
+                        ? 'Video Not Synced to Cloud Yet'
+                        : 'Unable to Play Video on This Browser'}
+                    </p>
+                    <p className="text-[11px] text-slate-300 leading-relaxed">
+                      {property.videoUrl?.startsWith('idb:')
+                        ? 'This video was saved offline on another device. Please re-upload it in Admin or request it directly via WhatsApp.'
+                        : 'Request the full walkthrough video directly on WhatsApp.'}
+                    </p>
+                    <a
+                      href={whatsappUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-[11px] font-bold"
+                    >
+                      <MessageCircle className="w-3.5 h-3.5" />
+                      <span>Get Video on WhatsApp</span>
+                    </a>
+                  </div>
+                );
+              }
+
+              if (parsed.type === 'iframe') {
+                return (
+                  <iframe
+                    src={parsed.src}
+                    title={`Video tour for ${property.title}`}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full h-full border-0"
+                  />
+                );
+              }
+
+              return (
+                <video
+                  src={parsed.src}
+                  controls
+                  playsInline
+                  muted
+                  autoPlay
+                  preload="metadata"
+                  onError={() => setVideoLoadError(true)}
+                  className="w-full h-full object-contain"
+                  poster={images[0]}
+                />
+              );
+            })()}
 
             {/* Back to Photos Button */}
             <button

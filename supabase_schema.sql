@@ -141,3 +141,15 @@ begin
 exception when others then
   -- publication table might already be added, ignore duplicate errors
 end $$;
+
+-- 7. CLOUD STORAGE BUCKET FOR VIDEOS & MEDIA
+-- Creates a public bucket 'property-media' so uploaded videos play on ALL phones and devices
+insert into storage.buckets (id, name, public)
+values ('property-media', 'property-media', true)
+on conflict (id) do update set public = true;
+
+drop policy if exists "Public Access property-media" on storage.objects;
+create policy "Public Access property-media"
+on storage.objects for all
+using ( bucket_id = 'property-media' )
+with check ( bucket_id = 'property-media' );
