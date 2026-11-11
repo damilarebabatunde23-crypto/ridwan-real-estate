@@ -59,8 +59,13 @@ import {
   updateEnquiryStatus, 
   resetToDefaults, 
   formatNaira, 
-  formatPriceWithPeriod 
+  formatPriceWithPeriod,
+  syncFromCloud
 } from '@/lib/store';
+import { 
+  getSupabaseCredentials, 
+  saveLocalSupabaseCredentials 
+} from '@/lib/supabase';
 import { saveVideoBlob, resolveVideoUrl, deleteVideoBlob } from '@/lib/videoStorage';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
@@ -178,6 +183,12 @@ export default function AdminPage() {
 
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
+  // Supabase Cloud Configuration
+  const [cloudConfig, setCloudConfig] = useState(getSupabaseCredentials());
+  const [customDbUrl, setCustomDbUrl] = useState('');
+  const [customDbKey, setCustomDbKey] = useState('');
+  const [isSyncingCloud, setIsSyncingCloud] = useState(false);
+
   useEffect(() => {
     // Check if session stored
     if (typeof window !== 'undefined') {
@@ -186,7 +197,42 @@ export default function AdminPage() {
     }
 
     refreshData();
+    setCloudConfig(getSupabaseCredentials());
   }, []);
+
+  const handleManualCloudSync = async () => {
+    setIsSyncingCloud(true);
+    try {
+      await syncFromCloud();
+      refreshData();
+      showNotify('Successfully synced all listings and settings from Supabase!');
+    } catch (err) {
+      showNotify('Failed to sync from cloud. Check your connection.', 'error');
+    } finally {
+      setIsSyncingCloud(false);
+    }
+  };
+
+  const handleSaveCloudCredentials = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!customDbUrl.trim() || !customDbKey.trim()) {
+      showNotify('Please enter both Supabase Project URL and Anon Public Key', 'error');
+      return;
+    }
+    setIsSyncingCloud(true);
+    saveLocalSupabaseCredentials(customDbUrl, customDbKey);
+    const updated = getSupabaseCredentials();
+    setCloudConfig(updated);
+    try {
+      await syncFromCloud();
+      refreshData();
+      showNotify('Connected to Supabase Cloud Database! Live sync active.');
+    } catch (err) {
+      showNotify('Saved credentials, but sync failed. Check your Supabase URL & Key.', 'error');
+    } finally {
+      setIsSyncingCloud(false);
+    }
+  };
 
   const refreshData = () => {
     const props = getProperties();
@@ -718,6 +764,62 @@ export default function AdminPage() {
               </button>
             </div>
           </div>
+
+          {/* Cloud Database Connection Status Banner */}
+          {cloudConfig.url ? (
+            <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-emerald-950 shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-sm">
+                  <Database className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-black text-sm text-emerald-900">Live Supabase Cloud Database Connected</span>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-800 border border-emerald-300">
+                      {cloudConfig.source === 'env' ? 'Netlify Config' : 'Direct Sync'}
+                    </span>
+                  </div>
+                  <p className="text-xs text-emerald-700 mt-0.5">
+                    All listings and edits posted here are immediately synced live to all visitors worldwide.
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={handleManualCloudSync}
+                disabled={isSyncingCloud}
+                className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition flex items-center justify-center gap-1.5 shrink-0 shadow-sm"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${isSyncingCloud ? 'animate-spin' : ''}`} />
+                <span>{isSyncingCloud ? 'Syncing...' : 'Sync Cloud Now'}</span>
+              </button>
+            </div>
+          ) : (
+            <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-amber-950 shadow-sm">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-amber-500 text-white flex items-center justify-center shrink-0 shadow-sm">
+                  <AlertCircle className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-black text-sm text-amber-900">Local Browser Storage Mode (Offline)</span>
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-100 text-amber-800 border border-amber-300">
+                      Private Device Only
+                    </span>
+                  </div>
+                  <p className="text-xs text-amber-700 mt-0.5">
+                    Properties posted right now are only saved in this browser. Connect your Supabase database in Settings or Netlify so visitors can see them!
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setActiveTab('settings')}
+                className="px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition flex items-center justify-center gap-1.5 shrink-0 shadow-sm"
+              >
+                <span>Connect Supabase</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
 
           {/* Metrics Overview Cards */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -1900,19 +2002,133 @@ export default function AdminPage() {
                 </div>
               )}
 
-              {/* Supabase Connection Helper Box */}
-              <div className="bg-slate-900 text-slate-300 rounded-3xl p-6 shadow-sm border border-slate-800 space-y-3 text-xs">
-                <div className="flex items-center gap-2 text-sky-400 font-bold">
-                  <Database className="w-4 h-4" />
-                  <span>Supabase Cloud Database & Storage Ready</span>
+              {/* Supabase Cloud Database Connection Card */}
+              <div className="bg-slate-900 text-slate-200 rounded-3xl p-6 sm:p-8 shadow-xl border border-slate-800 space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-5">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-sky-600 to-emerald-500 text-white flex items-center justify-center shrink-0 shadow-lg">
+                      <Database className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-black text-white flex items-center gap-2">
+                        <span>Supabase Cloud Database Synchronization</span>
+                      </h3>
+                      <p className="text-xs text-slate-400">
+                        Connect Supabase PostgreSQL to allow listings posted by the owner to appear live for all visitors worldwide.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div>
+                    {cloudConfig.url ? (
+                      <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-xs font-bold">
+                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                        <span>Connected ({cloudConfig.source === 'env' ? 'Netlify Env' : 'Direct Config'})</span>
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 text-xs font-bold">
+                        <span className="w-2 h-2 rounded-full bg-amber-400" />
+                        <span>Local Storage Mode (Private to this device)</span>
+                      </span>
+                    )}
+                  </div>
                 </div>
-                <p className="leading-relaxed">
-                  Your platform is fully configured with local browser persistence out-of-the-box, ensuring zero setup latency. To enable remote PostgreSQL multi-admin synchronization via Supabase:
-                </p>
-                <ol className="list-decimal pl-5 space-y-1 text-slate-400 font-mono text-[11px]">
-                  <li>Run the SQL statements from <code>supabase_schema.sql</code> in your Supabase SQL editor.</li>
-                  <li>Set <code>NEXT_PUBLIC_SUPABASE_URL</code> and <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> in <code>.env.local</code>.</li>
-                </ol>
+
+                {cloudConfig.url ? (
+                  <div className="space-y-4">
+                    <div className="bg-slate-800/80 rounded-2xl p-4 border border-slate-700/60 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                      <div className="space-y-1">
+                        <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">Connected Project URL</span>
+                        <div className="font-mono text-xs text-emerald-400 truncate max-w-md">{cloudConfig.url}</div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={handleManualCloudSync}
+                          disabled={isSyncingCloud}
+                          className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold transition flex items-center gap-1.5 shadow-sm"
+                        >
+                          <RefreshCw className={`w-3.5 h-3.5 ${isSyncingCloud ? 'animate-spin' : ''}`} />
+                          <span>{isSyncingCloud ? 'Syncing...' : 'Sync Now'}</span>
+                        </button>
+                        {cloudConfig.source === 'local' && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              saveLocalSupabaseCredentials('', '');
+                              setCloudConfig(getSupabaseCredentials());
+                              showNotify('Cloud credentials cleared from local override.');
+                            }}
+                            className="px-3 py-2 rounded-xl bg-slate-700 hover:bg-rose-900/60 text-slate-300 hover:text-rose-200 text-xs font-semibold transition"
+                          >
+                            Disconnect
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <form onSubmit={handleSaveCloudCredentials} className="space-y-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-xs font-bold text-slate-300 mb-1">
+                            Supabase Project URL
+                          </label>
+                          <input
+                            type="url"
+                            placeholder="https://xyzabcdefghijklmn.supabase.co"
+                            value={customDbUrl}
+                            onChange={(e) => setCustomDbUrl(e.target.value)}
+                            className="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs font-mono outline-none focus:border-sky-500"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-bold text-slate-300 mb-1">
+                            Supabase Anon Public API Key
+                          </label>
+                          <input
+                            type="password"
+                            placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI..."
+                            value={customDbKey}
+                            onChange={(e) => setCustomDbKey(e.target.value)}
+                            className="w-full p-2.5 bg-slate-800 border border-slate-700 rounded-xl text-white text-xs font-mono outline-none focus:border-sky-500"
+                          />
+                        </div>
+                      </div>
+
+                      <button
+                        type="submit"
+                        disabled={isSyncingCloud}
+                        className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-sky-600 to-emerald-600 hover:from-sky-500 hover:to-emerald-500 text-white font-bold text-xs transition flex items-center gap-2 shadow-lg"
+                      >
+                        <Save className="w-4 h-4" />
+                        <span>{isSyncingCloud ? 'Connecting & Syncing...' : 'Connect & Sync Cloud Database'}</span>
+                      </button>
+                    </form>
+
+                    <div className="bg-slate-800/60 rounded-2xl p-4 border border-slate-700/60 text-xs space-y-2 text-slate-300">
+                      <span className="font-bold text-sky-400 block">Or configure in Netlify (Recommended for Production):</span>
+                      <p className="text-slate-400 text-[11px] leading-relaxed">
+                        In Netlify, go to <strong>Site configuration</strong> &rarr; <strong>Environment variables</strong> and add:
+                      </p>
+                      <ul className="list-disc pl-5 font-mono text-[11px] text-slate-300 space-y-0.5">
+                        <li><code>NEXT_PUBLIC_SUPABASE_URL</code>: your project URL</li>
+                        <li><code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code>: your project public anon key</li>
+                      </ul>
+                    </div>
+                  </div>
+                )}
+
+                <div className="pt-2 border-t border-slate-800">
+                  <div className="flex items-center gap-2 text-xs font-bold text-slate-400">
+                    <Database className="w-3.5 h-3.5 text-sky-400" />
+                    <span>Database Schema Instructions:</span>
+                  </div>
+                  <p className="text-slate-400 text-[11px] mt-1 leading-relaxed">
+                    Make sure you have run the queries in <code className="text-sky-300 bg-slate-800 px-1.5 py-0.5 rounded">supabase_schema.sql</code> in the Supabase SQL editor to create the tables (properties, certificates, enquiries, business_settings).
+                  </p>
+                </div>
               </div>
             </div>
           )}

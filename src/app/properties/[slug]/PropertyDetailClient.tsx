@@ -33,7 +33,8 @@ import {
   formatPriceWithPeriod, 
   getWhatsAppPropertyLink, 
   getWhatsAppHostelLink,
-  getWhatsAppGeneralLink 
+  getWhatsAppGeneralLink,
+  syncFromCloud
 } from '@/lib/store';
 import { resolveVideoUrl } from '@/lib/videoStorage';
 import Navbar from '@/components/Navbar';
@@ -58,15 +59,27 @@ export default function PropertyDetailClient({ slug }: PropertyDetailClientProps
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    const loadProperty = () => {
-      const found = getPropertyBySlug(slug);
+    let isMounted = true;
+
+    const loadProperty = async () => {
+      let found = getPropertyBySlug(slug);
+      if (!found) {
+        // Attempt cloud sync in case it's a freshly posted property from another device
+        try {
+          await syncFromCloud();
+          found = getPropertyBySlug(slug);
+        } catch (_) {}
+      }
+
+      if (!isMounted) return;
+
       if (found) {
         setProperty(found);
         setActiveImage(found.images?.[0] || '');
         if (found.videoUrl) {
           if (found.videoUrl.startsWith('idb:')) {
             resolveVideoUrl(found.videoUrl).then((resolved) => {
-              if (resolved) setPlaybackVideoUrl(resolved);
+              if (resolved && isMounted) setPlaybackVideoUrl(resolved);
             });
           } else {
             setPlaybackVideoUrl(found.videoUrl);
@@ -79,8 +92,20 @@ export default function PropertyDetailClient({ slug }: PropertyDetailClientProps
 
     loadProperty();
 
-    window.addEventListener('rca_storage_updated', loadProperty);
-    return () => window.removeEventListener('rca_storage_updated', loadProperty);
+    const handleStorageUpdated = () => {
+      const refreshed = getPropertyBySlug(slug);
+      if (refreshed && isMounted) {
+        setProperty(refreshed);
+        setActiveImage(refreshed.images?.[0] || '');
+      }
+      if (isMounted) setSettings(getSettings());
+    };
+
+    window.addEventListener('rca_storage_updated', handleStorageUpdated);
+    return () => {
+      isMounted = false;
+      window.removeEventListener('rca_storage_updated', handleStorageUpdated);
+    };
   }, [slug]);
 
   if (isLoading) {
