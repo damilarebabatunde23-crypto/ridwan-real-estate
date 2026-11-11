@@ -1,0 +1,4 @@
+# Netlify Redirects file for Single Page Application routing
+# Static files (like /admin, /hostels, /properties) are served directly.
+# Missing routes fall back to /index.html with status 200 so Next.js client router can render them.
+/*    /index.html   200

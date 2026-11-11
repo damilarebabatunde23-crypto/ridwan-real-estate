@@ -1,6 +1,6 @@
-:HL["/ridwan-real-estate/_next/static/chunks/3ktm20meribn1.css","style"]
+:HL["/ridwan-real-estate/_next/static/chunks/1u4udm2n-m9o2.css","style"]
 :HL["/ridwan-real-estate/_next/static/media/07a39a8a4660cc7c-s.p.0r6juujl39pe6.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 :HL["/ridwan-real-estate/_next/static/media/605ce01b664af129-s.p.0wgildi0cnwt9.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
 2:[["children",{"s":"__PAGE__","h":160}]]
 1:[["children",{"s":"hostels","h":96,"c":"$Q2"}]]
-0:{"b":"bGePvl9zYT3sCkpXRrrFt","t":{"t":{"s":"","h":80,"c":"$Q1"}}}
+0:{"b":"gpxE4gu1B_LrDaVlisRuF","t":{"t":{"s":"","h":80,"c":"$Q1"}}}
