@@ -4,4 +4,4 @@
 3:[["children",{"s":"__PAGE__","h":160}]]
 2:[["children",{"s":{"n":"slug","t":"d","k":"contemporary-4-bedroom-bungalow-eleko","s":[]},"h":96,"c":"$Q3"}]]
 1:[["children",{"s":"properties","h":96,"c":"$Q2"}]]
-0:{"b":"gpxE4gu1B_LrDaVlisRuF","t":{"t":{"s":"","h":80,"c":"$Q1"}}}
+0:{"b":"L7ZkUOoOj3hPlSAfqNijQ","t":{"t":{"s":"","h":80,"c":"$Q1"}}}
